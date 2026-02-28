@@ -14,6 +14,57 @@ enum CameraState: Equatable {
     case error(String)  // Something went wrong
 }
 
+// MARK: - Setup Result
+private enum SetupResult {
+    case success
+    case noCamera
+}
+
+// MARK: - Camera Session Manager (nonisolated — runs AVFoundation off main actor)
+private final class CameraSessionManager: @unchecked Sendable {
+
+    let session = AVCaptureSession()
+    let photoOutput = AVCapturePhotoOutput()
+    private var isSessionRunning = false
+
+    func setup() -> SetupResult {
+        var configured = false
+        session.beginConfiguration()
+        defer { session.commitConfiguration() }
+
+        session.sessionPreset = .photo
+
+        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
+              let input = try? AVCaptureDeviceInput(device: device),
+              session.canAddInput(input) else {
+            return .noCamera
+        }
+        session.addInput(input)
+
+        if session.canAddOutput(photoOutput) {
+            session.addOutput(photoOutput)
+        }
+
+        configured = true
+
+        if configured {
+            session.startRunning()
+            isSessionRunning = true
+        }
+        return .success
+    }
+
+    func stopSession() {
+        guard isSessionRunning else { return }
+        isSessionRunning = false
+        session.stopRunning()
+    }
+
+    func capturePhoto(settings: AVCapturePhotoSettings, delegate: AVCapturePhotoCaptureDelegate) {
+        photoOutput.capturePhoto(with: settings, delegate: delegate)
+    }
+}
+
 // MARK: - Camera View Model
 @MainActor
 class CameraViewModel: NSObject, ObservableObject {
@@ -26,18 +77,21 @@ class CameraViewModel: NSObject, ObservableObject {
     @Published var showFlash = false               // Brief white flash on capture
     @Published var permissionDenied = false
 
-    // MARK: - Camera Session
-    let session = AVCaptureSession()
-    private let photoOutput = AVCapturePhotoOutput()
+    // MARK: - Camera Session (nonisolated manager for AVFoundation work)
+    private let sessionManager = CameraSessionManager()
+
+    /// Session reference for preview layer; accessed from main actor for UI binding only.
+    var session: AVCaptureSession { sessionManager.session }
+
+    // MARK: - Continuation (main actor)
     private var photoContinuation: CheckedContinuation<UIImage, Error>?
-    private var isSessionRunning = false
 
     // MARK: - Services
     private let visionService = VisionService()
 
     // MARK: - Setup
     func setupCamera() async {
-        // Check permission
+        // Check permission (main actor)
         let status = AVCaptureDevice.authorizationStatus(for: .video)
         switch status {
         case .notDetermined:
@@ -53,39 +107,15 @@ class CameraViewModel: NSObject, ObservableObject {
             break
         }
 
-        // Configure session on background thread
-        await Task.detached(priority: .userInitiated) {
-            var configured = false
-            do {
-                self.session.beginConfiguration()
-                defer { self.session.commitConfiguration() }
-
-                self.session.sessionPreset = .photo
-
-                // Add video input
-                guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
-                      let input = try? AVCaptureDeviceInput(device: device),
-                      self.session.canAddInput(input) else {
-                    await MainActor.run { self.cameraState = .error("Camera not available") }
-                    return
-                }
-                self.session.addInput(input)
-
-                // Add photo output
-                if self.session.canAddOutput(self.photoOutput) {
-                    self.session.addOutput(self.photoOutput)
-                }
-
-                configured = true
-            } catch {
-                await MainActor.run { self.cameraState = .error("Camera not available") }
-            }
-
-            if configured {
-                self.session.startRunning()
-                await MainActor.run { self.isSessionRunning = true }
-            }
+        // Configure session off main actor
+        let manager = sessionManager
+        let result = await Task.detached(priority: .userInitiated) {
+            manager.setup()
         }.value
+
+        if result == .noCamera {
+            cameraState = .error("Camera not available")
+        }
     }
 
     // MARK: - Capture Photo
@@ -117,7 +147,7 @@ class CameraViewModel: NSObject, ObservableObject {
         try await withCheckedThrowingContinuation { continuation in
             self.photoContinuation = continuation
             let settings = AVCapturePhotoSettings()
-            photoOutput.capturePhoto(with: settings, delegate: self)
+            self.sessionManager.capturePhoto(settings: settings, delegate: self)
         }
     }
 
@@ -168,10 +198,9 @@ class CameraViewModel: NSObject, ObservableObject {
 
     // MARK: - Stop Session
     func stopSession() {
-        guard isSessionRunning else { return }
-        isSessionRunning = false
+        let manager = sessionManager
         Task.detached(priority: .background) {
-            self.session.stopRunning()
+            manager.stopSession()
         }
     }
 }

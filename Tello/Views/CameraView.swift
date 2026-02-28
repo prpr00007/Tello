@@ -11,7 +11,6 @@ struct CameraView: View {
     @AppStorage("wordCount") private var wordCount = 0
 
     @StateObject private var viewModel = CameraViewModel()
-    @State private var navigateToLoading = false
     @State private var viewfinderPulse = false
     @State private var showPermissionAlert = false
 
@@ -61,17 +60,18 @@ struct CameraView: View {
                 lowConfidencePicker
             }
 
-            // MARK: - Navigate to Loading
-            NavigationLink(
-                destination: LoadingView(
-                    detectedObject: viewModel.selectedObject ?? "",
-                    childName: childName
-                )
-                .navigationBarHidden(true),
-                isActive: $navigateToLoading
-            ) { EmptyView() }
+            // MARK: - Navigate to Loading (value-based navigation)
+            if let object = viewModel.selectedObject {
+                NavigationLink(value: object) {
+                    EmptyView()
+                }
+            }
         }
         .navigationBarHidden(true)
+        .navigationDestination(for: String.self) { object in
+            LoadingView(detectedObject: object, childName: childName)
+                .navigationBarHidden(true)
+        }
         .task {
             await viewModel.setupCamera()
             if viewModel.permissionDenied {
@@ -80,11 +80,6 @@ struct CameraView: View {
         }
         .onDisappear {
             viewModel.stopSession()
-        }
-        .onChange(of: viewModel.selectedObject) { _, object in
-            if object != nil {
-                navigateToLoading = true
-            }
         }
         .alert("Camera Access Needed", isPresented: $showPermissionAlert) {
             Button("Open Settings") {

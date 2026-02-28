@@ -6,7 +6,7 @@ import UIKit
 import SwiftUI
 
 // MARK: - Camera State
-enum CameraState {
+enum CameraState: Equatable {
     case idle           // Camera is live, waiting for capture
     case capturing      // Photo is being captured (brief flash)
     case processing     // Vision is classifying the image

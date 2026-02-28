@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Read With Me uses your camera to spot objects and turn them into personalised stories just for you!</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Read With Me uses the microphone to help read stories aloud.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Read With Me reads stories aloud to help you learn new words.</string>
+</dict>
+</plist>

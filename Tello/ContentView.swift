@@ -1,5 +1,4 @@
-// Purpose: Root navigation controller. Routes to onboarding or main app
-// depending on whether the user has completed onboarding before.
+// Purpose: Root navigation controller. Routes to onboarding or main app.
 
 import SwiftUI
 
@@ -10,7 +9,9 @@ struct ContentView: View {
 
     var body: some View {
         if hasCompletedOnboarding {
-            CameraView()
+            NavigationStack {
+                CameraView()
+            }
         } else {
             OnboardingView()
         }

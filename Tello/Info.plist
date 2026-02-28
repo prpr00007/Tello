@@ -2,18 +2,36 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Read With Me uses your camera to spot objects and turn them into personalised stories just for you!</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Read With Me uses the microphone to help read stories aloud.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Read With Me reads stories aloud to help you learn new words.</string>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
+        <key>CFBundleExecutable</key>
+        <string>$(EXECUTABLE_NAME)</string>
+        <key>CFBundleIdentifier</key>
+        <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+        <key>CFBundleName</key>
+        <string>$(PRODUCT_NAME)</string>
+        <key>CFBundleDisplayName</key>
+        <string>Tello</string>
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+        <key>CFBundleShortVersionString</key>
+        <string>1.0</string>
+        <key>CFBundleVersion</key>
+        <string>1</string>
+        <key>CFBundleDevelopmentRegion</key>
+        <string>en</string>
+        <key>LSRequiresIPhoneOS</key>
+        <true/>
+        <key>NSCameraUsageDescription</key>
+        <string>Tello uses your camera to spot objects and turn them into personalised stories just for you!</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>Tello uses the microphone to help read stories aloud.</string>
+        <key>NSSpeechRecognitionUsageDescription</key>
+        <string>Tello reads stories aloud to help you learn new words.</string>
+        <key>UISupportedInterfaceOrientations~ipad</key>
+        <array>
+                <string>UIInterfaceOrientationLandscapeLeft</string>
+                <string>UIInterfaceOrientationLandscapeRight</string>
+        </array>
+        <key>UILaunchScreen</key>
+        <dict/>
 </dict>
 </plist>

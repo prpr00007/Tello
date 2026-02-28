@@ -30,6 +30,7 @@ class CameraViewModel: NSObject, ObservableObject {
     let session = AVCaptureSession()
     private let photoOutput = AVCapturePhotoOutput()
     private var photoContinuation: CheckedContinuation<UIImage, Error>?
+    private var isSessionRunning = false
 
     // MARK: - Services
     private let visionService = VisionService()
@@ -54,25 +55,36 @@ class CameraViewModel: NSObject, ObservableObject {
 
         // Configure session on background thread
         await Task.detached(priority: .userInitiated) {
-            self.session.beginConfiguration()
-            self.session.sessionPreset = .photo
+            var configured = false
+            do {
+                self.session.beginConfiguration()
+                defer { self.session.commitConfiguration() }
 
-            // Add video input
-            guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
-                  let input = try? AVCaptureDeviceInput(device: device),
-                  self.session.canAddInput(input) else {
+                self.session.sessionPreset = .photo
+
+                // Add video input
+                guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
+                      let input = try? AVCaptureDeviceInput(device: device),
+                      self.session.canAddInput(input) else {
+                    await MainActor.run { self.cameraState = .error("Camera not available") }
+                    return
+                }
+                self.session.addInput(input)
+
+                // Add photo output
+                if self.session.canAddOutput(self.photoOutput) {
+                    self.session.addOutput(self.photoOutput)
+                }
+
+                configured = true
+            } catch {
                 await MainActor.run { self.cameraState = .error("Camera not available") }
-                return
-            }
-            self.session.addInput(input)
-
-            // Add photo output
-            if self.session.canAddOutput(self.photoOutput) {
-                self.session.addOutput(self.photoOutput)
             }
 
-            self.session.commitConfiguration()
-            self.session.startRunning()
+            if configured {
+                self.session.startRunning()
+                await MainActor.run { self.isSessionRunning = true }
+            }
         }.value
     }
 
@@ -156,6 +168,8 @@ class CameraViewModel: NSObject, ObservableObject {
 
     // MARK: - Stop Session
     func stopSession() {
+        guard isSessionRunning else { return }
+        isSessionRunning = false
         Task.detached(priority: .background) {
             self.session.stopRunning()
         }

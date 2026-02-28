@@ -8,5 +8,10 @@
 	<string>Read With Me uses the microphone to help read stories aloud.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Read With Me reads stories aloud to help you learn new words.</string>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
 </dict>
 </plist>

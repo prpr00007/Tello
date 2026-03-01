@@ -30,27 +30,6 @@ struct HomeView: View {
                     cloud3Offset: cloud3Offset
                 )
 
-                // MARK: - Decorative barn on mid hill (left side, behind book)
-                GeometryReader { geo in
-                    let barnFill: Double = wordCount >= 20 ? 1.0 : wordCount >= 10 ? 0.5 : wordCount >= 5 ? 0.25 : 0
-                    VStack(spacing: 8) {
-                        Button {
-                            navigationPath.append("wordbarn")
-                        } label: {
-                            HomeViewBarn(fillLevel: barnFill)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        Text("Word Barn")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.white)
-                            .shadow(color: .black.opacity(0.4), radius: 2)
-                    }
-                    .position(
-                        x: geo.size.width * 0.15,
-                        y: geo.size.height * 0.62
-                    )
-                }
-
                 // MARK: - Main Content
                 VStack(spacing: 0) {
 
@@ -179,7 +158,7 @@ struct HomeView: View {
                 navigationPath.append("wordbarn")
             } label: {
                 HStack(spacing: 10) {
-                    Text("My Word Barn")
+                    Text("Word Barn")
                         .font(fontManager.uiFont(size: 18, weight: .semibold))
                         .foregroundColor(Color("AppText"))
                 }
@@ -188,7 +167,7 @@ struct HomeView: View {
                 .background(.ultraThinMaterial)
                 .cornerRadius(20)
             }
-            .accessibilityLabel("My Word Barn")
+            .accessibilityLabel("Word Barn")
 
             // Reset onboarding (test only)
             Button {
@@ -579,105 +558,6 @@ struct BookPages: View {
         }
         .frame(width: width, height: height)
         .clipShape(RoundedRectangle(cornerRadius: 8))
-    }
-}
-
-// MARK: - Home View Barn (140x120pt decorative barn on landscape)
-struct HomeViewBarn: View {
-    let fillLevel: Double
-
-    var body: some View {
-        GeometryReader { _ in
-            ZStack(alignment: .bottom) {
-                // LAYER 1 - Roof triangle: Path (0,55)→(140,55)→(70,0), frame 140x55, #5D3A1A
-                HomeBarnRoofTriangle()
-                    .fill(Color(hex: "#5D3A1A"))
-                    .frame(width: 140, height: 55)
-                    .offset(y: -70)
-
-                // LAYER 2 - Roof overhang: 148x5, #4A2E12, at roof base
-                Rectangle()
-                    .fill(Color(hex: "#4A2E12"))
-                    .frame(width: 148, height: 5)
-                    .offset(x: -4, y: -65)
-
-                // LAYER 3 - Barn body: 140x70, #C0392B
-                Rectangle()
-                    .fill(Color(hex: "#C0392B"))
-                    .frame(width: 140, height: 70)
-
-                // LAYER 4 - Hay fill: 134 wide, height 66*fillLevel, #F39C12 0.85, bottom-anchored, clipped
-                ZStack(alignment: .bottom) {
-                    Rectangle()
-                        .fill(Color(hex: "#F39C12").opacity(0.85))
-                        .frame(width: 134, height: 66 * CGFloat(fillLevel))
-                        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: fillLevel)
-                }
-                .frame(width: 140, height: 70)
-                .clipped()
-
-                // LAYER 5 - Left wall shadow: 8x70, black 0.15, far left
-                Rectangle()
-                    .fill(Color.black.opacity(0.15))
-                    .frame(width: 8, height: 70)
-                    .position(x: 4, y: 85)
-
-                // LAYER 6 - Right wall shadow: 8x70, far right
-                Rectangle()
-                    .fill(Color.black.opacity(0.15))
-                    .frame(width: 8, height: 70)
-                    .position(x: 136, y: 85)
-
-                // LAYER 7 - Left window: 18x18 RoundedRectangle, #F8C471, 16pt from left, 12pt from top of body
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color(hex: "#F8C471"))
-                    .frame(width: 18, height: 18)
-                    .position(x: 25, y: 71)
-
-                // LAYER 8 - Right window: 18x18, 16pt from right
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color(hex: "#F8C471"))
-                    .frame(width: 18, height: 18)
-                    .position(x: 115, y: 71)
-
-                // LAYER 9 - Left door: 28x38 RoundedRectangle, #922B21, centre - 29pt, bottom
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color(hex: "#922B21"))
-                    .frame(width: 28, height: 38)
-                    .position(x: 41, y: 101)
-
-                // LAYER 10 - Right door: 28x38, centre + 1pt, bottom
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color(hex: "#922B21"))
-                    .frame(width: 28, height: 38)
-                    .position(x: 71, y: 101)
-
-                // LAYER 11 - Door trim: 2x38, #7B241C, centred between doors
-                Rectangle()
-                    .fill(Color(hex: "#7B241C"))
-                    .frame(width: 2, height: 38)
-                    .position(x: 70, y: 101)
-
-                // LAYER 12 - Loft window: 22x16 RoundedRectangle, #3D1F0F, 10pt from bottom of roof
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color(hex: "#3D1F0F"))
-                    .frame(width: 22, height: 16)
-                    .position(x: 70, y: 32)
-            }
-        }
-        .frame(width: 140, height: 120)
-    }
-}
-
-// Roof triangle: (0,55)→(140,55)→(70,0) in 140x55 frame
-struct HomeBarnRoofTriangle: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: 0, y: rect.height))
-        path.addLine(to: CGPoint(x: rect.width, y: rect.height))
-        path.addLine(to: CGPoint(x: rect.width / 2, y: 0))
-        path.closeSubpath()
-        return path
     }
 }
 

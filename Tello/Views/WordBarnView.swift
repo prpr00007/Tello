@@ -71,18 +71,6 @@ struct WordBarnView: View {
         WordMilestone.current(for: wordCount)
     }
 
-    // Barn hay fill: 0 = empty, 5+ = peek, 10+ = halfway, 20+ = full + overflow
-    private var barnFillLevel: Double {
-        if wordCount >= 20 { return 1.0 }
-        if wordCount >= 10 { return 0.5 }
-        if wordCount >= 5 { return 0.25 }
-        return 0
-    }
-
-    private var barnOverflows: Bool {
-        wordCount >= 20
-    }
-
     var body: some View {
         ZStack {
             Color("AppBackground").ignoresSafeArea()
@@ -115,7 +103,7 @@ struct WordBarnView: View {
                 } else {
                     GeometryReader { geo in
                         HStack(alignment: .top, spacing: 0) {
-                            // Left Column — Barn + Stats
+                            // Left Column — Word count + Stats
                             leftColumn
                                 .frame(width: geo.size.width * 0.32)
 
@@ -162,9 +150,15 @@ struct WordBarnView: View {
                         .foregroundColor(Color("AppSecondaryText"))
                 }
 
-                // Barn Illustration
-                BarnIllustration(fillLevel: barnFillLevel, wordCount: wordCount, overflows: barnOverflows)
-                    .frame(height: 200)
+                // Word count display
+                VStack(spacing: 8) {
+                    Text("\(wordCount)")
+                        .font(.system(size: 72, weight: .bold))
+                        .foregroundColor(Color("AppPrimary"))
+                    Text("words collected")
+                        .font(fontManager.uiFont(size: 18))
+                        .foregroundColor(Color("AppSecondaryText"))
+                }
 
                 // Milestone Badge
                 if milestone != .none {
@@ -266,8 +260,14 @@ struct WordBarnView: View {
         VStack(spacing: 28) {
             Spacer()
 
-            BarnIllustration(fillLevel: 0, wordCount: 0, overflows: false)
-                .frame(height: 180)
+            VStack(spacing: 8) {
+                Text("\(wordCount)")
+                    .font(.system(size: 72, weight: .bold))
+                    .foregroundColor(Color("AppPrimary"))
+                Text("words collected")
+                    .font(fontManager.uiFont(size: 18))
+                    .foregroundColor(Color("AppSecondaryText"))
+            }
 
             VStack(spacing: 12) {
                 Text("Your barn is empty!")
@@ -333,141 +333,6 @@ struct WordBarnView: View {
                 withAnimation { showMilestoneAnimation = true }
             }
         }
-    }
-}
-
-// MARK: - Barn Illustration (SwiftUI shapes only)
-struct BarnIllustration: View {
-
-    let fillLevel: Double  // 0.0 to 1.0, animated
-    let wordCount: Int
-    let overflows: Bool
-
-    var body: some View {
-        GeometryReader { geo in
-            let w = geo.size.width
-            let h = geo.size.height
-            ZStack(alignment: .bottom) {
-                // Barn body (rectangle, deep red)
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color(hex: "#C0392B"))
-                    .frame(width: w * 0.85, height: h * 0.65)
-                    .overlay(
-                        // Two small square windows (upper sides)
-                        HStack(spacing: w * 0.35) {
-                            RoundedRectangle(cornerRadius: 1)
-                                .fill(Color(hex: "#E8F4FD"))
-                                .frame(width: w * 0.12, height: h * 0.12)
-                            RoundedRectangle(cornerRadius: 1)
-                                .fill(Color(hex: "#E8F4FD"))
-                                .frame(width: w * 0.12, height: h * 0.12)
-                        }
-                        .offset(y: -h * 0.18)
-                    )
-                    .overlay(
-                        // White X on doors (centre)
-                        BarnDoorXShape()
-                            .stroke(Color.white, lineWidth: max(2, w * 0.02))
-                            .frame(width: w * 0.35, height: h * 0.45)
-                            .offset(y: h * 0.08)
-                    )
-
-                // Roof (triangle / pentagon, dark brown)
-                BarnRoofShape()
-                    .fill(Color(hex: "#6B3A2A"))
-                    .frame(width: w * 0.98, height: h * 0.38)
-                    .offset(y: -h * 0.32)
-
-                // Hay loft opening (top centre of roof)
-                RoundedRectangle(cornerRadius: 1)
-                    .fill(Color(hex: "#2C1810"))
-                    .frame(width: w * 0.2, height: h * 0.08)
-                    .offset(y: -h * 0.48)
-
-                // Hay inside barn (golden, fills from bottom)
-                if fillLevel > 0 {
-                    BarnHayFillShape(fillLevel: fillLevel)
-                        .fill(Color(hex: "#F4D03F"))
-                        .frame(width: w * 0.82, height: h * 0.6)
-                        .offset(y: h * 0.02)
-                        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: fillLevel)
-                }
-
-                // Hay overflow from loft (when 20+ words)
-                if overflows {
-                    BarnHayOverflowShape()
-                        .fill(Color(hex: "#F4D03F"))
-                        .frame(width: w * 0.25, height: h * 0.2)
-                        .offset(y: -h * 0.52)
-                }
-
-                // Word count badge
-                if wordCount > 0 {
-                    Text("\(wordCount)")
-                        .font(.system(size: min(w * 0.2, 36), weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
-                        .shadow(color: .black.opacity(0.3), radius: 2)
-                        .offset(y: -h * 0.05)
-                }
-            }
-            .frame(width: w, height: h)
-        }
-    }
-}
-
-// Roof: triangle with flat top for hay loft
-struct BarnRoofShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let w = rect.width
-        let h = rect.height
-        path.move(to: CGPoint(x: 0, y: h))
-        path.addLine(to: CGPoint(x: w * 0.5, y: h * 0.25))
-        path.addLine(to: CGPoint(x: w, y: h))
-        path.closeSubpath()
-        return path
-    }
-}
-
-// White X on barn doors
-struct BarnDoorXShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let w = rect.width
-        let h = rect.height
-        path.move(to: .zero)
-        path.addLine(to: CGPoint(x: w, y: h))
-        path.move(to: CGPoint(x: w, y: 0))
-        path.addLine(to: CGPoint(x: 0, y: h))
-        return path
-    }
-}
-
-// Hay fill rectangle (bottom-up), animatable
-struct BarnHayFillShape: Shape {
-    var fillLevel: Double
-    var animatableData: Double {
-        get { fillLevel }
-        set { fillLevel = newValue }
-    }
-    func path(in rect: CGRect) -> Path {
-        let fillHeight = rect.height * fillLevel
-        return Path(CGRect(x: 0, y: rect.height - fillHeight, width: rect.width, height: fillHeight))
-    }
-}
-
-// Hay overflowing from loft
-struct BarnHayOverflowShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let w = rect.width
-        let h = rect.height
-        path.move(to: CGPoint(x: w * 0.2, y: h))
-        path.addLine(to: CGPoint(x: w * 0.8, y: h))
-        path.addLine(to: CGPoint(x: w * 0.7, y: h * 0.3))
-        path.addLine(to: CGPoint(x: w * 0.3, y: h * 0.3))
-        path.closeSubpath()
-        return path
     }
 }
 

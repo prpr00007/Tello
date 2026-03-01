@@ -13,6 +13,7 @@ struct CameraView: View {
     @StateObject private var viewModel = CameraViewModel()
     @State private var viewfinderPulse = false
     @State private var showPermissionAlert = false
+    @State private var showWordJar = false
 
     var body: some View {
         ZStack {
@@ -69,6 +70,10 @@ struct CameraView: View {
             LoadingView(detectedObject: object, childName: childName)
                 .navigationBarHidden(true)
         }
+        .navigationDestination(isPresented: $showWordJar) {
+            WordJarView()
+                .navigationBarHidden(true)
+        }
         .task {
             await viewModel.setupCamera()
             if viewModel.permissionDenied {
@@ -93,7 +98,9 @@ struct CameraView: View {
     // MARK: - Top Bar
     var topBar: some View {
         HStack {
-            NavigationLink(destination: WordJarView().navigationBarHidden(true)) {
+            Button {
+                showWordJar = true
+            } label: {
                 HStack(spacing: 10) {
                     Image(systemName: "text.book.closed.fill")
                         .font(.system(size: 20, weight: .medium))

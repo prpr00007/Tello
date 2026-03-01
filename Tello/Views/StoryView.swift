@@ -68,13 +68,12 @@ struct StoryView: View {
                     navigateToWordJar = true
                 })
             }
-
-            // Word Jar navigation
-            NavigationLink(destination: WordJarView().navigationBarHidden(true), isActive: $navigateToWordJar) {
-                EmptyView()
-            }
         }
         .navigationBarHidden(true)
+        .navigationDestination(isPresented: $navigateToWordJar) {
+            WordJarView()
+                .navigationBarHidden(true)
+        }
         .onDisappear {
             speechService.stop()
         }

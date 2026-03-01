@@ -60,10 +60,29 @@ class VisionService {
         "bridge": "bridge", "castle": "castle"
     ]
 
+    // MARK: - Crop to Center
+    private func cropToCenter(image: UIImage) -> UIImage {
+        guard let cgImage = image.cgImage else { return image }
+
+        let width = CGFloat(cgImage.width)
+        let height = CGFloat(cgImage.height)
+
+        // Crop to centre square
+        let size = min(width, height)
+        let x = (width - size) / 2
+        let y = (height - size) / 2
+
+        let cropRect = CGRect(x: x, y: y, width: size, height: size)
+
+        guard let cropped = cgImage.cropping(to: cropRect) else { return image }
+        return UIImage(cgImage: cropped, scale: image.scale, orientation: image.imageOrientation)
+    }
+
     // MARK: - Classify Image
     /// Classifies a UIImage and returns up to 3 results sorted by confidence
     func classify(image: UIImage) async throws -> [VisionResult] {
-        guard let cgImage = image.cgImage else {
+        let croppedImage = cropToCenter(image: image)
+        guard let cgImage = croppedImage.cgImage else {
             throw VisionError.invalidImage
         }
 

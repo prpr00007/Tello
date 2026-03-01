@@ -23,6 +23,14 @@ struct CameraView: View {
             CameraPreviewView(session: viewModel.session)
                 .ignoresSafeArea()
 
+            // MARK: - Dark overlay outside viewfinder (centre stays clear)
+            Color.black.opacity(0.45)
+                .ignoresSafeArea()
+                .mask(
+                    ViewfinderOverlayShape(size: 400, cornerRadius: 32)
+                        .fill(Color.white, style: FillStyle(eoFill: true))
+                )
+
             // MARK: - Flash Overlay
             if viewModel.showFlash {
                 Color.white
@@ -178,10 +186,16 @@ struct CameraView: View {
                         ),
                         lineWidth: 2
                     )
-                    .frame(width: 340, height: 340)
+                    .frame(width: 400, height: 400)
 
                 ViewfinderBrackets(pulse: viewfinderPulse)
-                    .frame(width: 340, height: 340)
+                    .frame(width: 400, height: 400)
+
+                Text("Point this at something!")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.5), radius: 2)
+                    .offset(y: 160)
             }
             .onAppear {
                 withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
@@ -340,23 +354,38 @@ struct CameraView: View {
     }
 }
 
+// MARK: - Viewfinder overlay shape (full rect with centre hole for even-odd mask)
+struct ViewfinderOverlayShape: Shape {
+    var size: CGFloat = 400
+    var cornerRadius: CGFloat = 32
+
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        p.addRect(rect)
+        let x = (rect.width - size) / 2
+        let y = (rect.height - size) / 2
+        p.addRoundedRect(in: CGRect(x: x, y: y, width: size, height: size), cornerRadius: cornerRadius)
+        return p
+    }
+}
+
 // MARK: - Viewfinder Brackets
 struct ViewfinderBrackets: View {
 
     let pulse: Bool
     let bracketLength: CGFloat = 44
-    let bracketWidth: CGFloat = 5
+    let bracketWidth: CGFloat = 6
 
     var body: some View {
         ZStack {
             bracketShape(rotation: 0)
-                .offset(x: -152, y: -152)
+                .offset(x: -178, y: -178)
             bracketShape(rotation: 90)
-                .offset(x: 152, y: -152)
+                .offset(x: 178, y: -178)
             bracketShape(rotation: 180)
-                .offset(x: 152, y: 152)
+                .offset(x: 178, y: 178)
             bracketShape(rotation: 270)
-                .offset(x: -152, y: 152)
+                .offset(x: -178, y: 178)
         }
         .opacity(pulse ? 1.0 : 0.65)
         .scaleEffect(pulse ? 1.05 : 1.0)
@@ -365,7 +394,7 @@ struct ViewfinderBrackets: View {
 
     func bracketShape(rotation: Double) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 3)
+            RoundedRectangle(cornerRadius: 4)
                 .fill(
                     LinearGradient(
                         colors: [Color.white, Color.white.opacity(0.9)],
@@ -374,9 +403,9 @@ struct ViewfinderBrackets: View {
                     )
                 )
                 .frame(width: bracketLength, height: bracketWidth)
-                .offset(x: bracketLength / 2 - 2.5, y: 0)
+                .offset(x: bracketLength / 2 - bracketWidth / 2, y: 0)
 
-            RoundedRectangle(cornerRadius: 3)
+            RoundedRectangle(cornerRadius: 4)
                 .fill(
                     LinearGradient(
                         colors: [Color.white, Color.white.opacity(0.9)],
@@ -385,7 +414,7 @@ struct ViewfinderBrackets: View {
                     )
                 )
                 .frame(width: bracketWidth, height: bracketLength)
-                .offset(x: 0, y: bracketLength / 2 - 2.5)
+                .offset(x: 0, y: bracketLength / 2 - bracketWidth / 2)
         }
         .rotationEffect(.degrees(rotation))
         .shadow(color: Color("AppPrimary").opacity(0.6), radius: 6)

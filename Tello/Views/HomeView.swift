@@ -32,26 +32,22 @@ struct HomeView: View {
 
                 // MARK: - Decorative barn on mid hill (left side, behind book)
                 GeometryReader { geo in
-                    let w = geo.size.width
-                    let h = geo.size.height
                     let barnFill: Double = wordCount >= 20 ? 1.0 : wordCount >= 10 ? 0.5 : wordCount >= 5 ? 0.25 : 0
-                    VStack(spacing: 4) {
+                    VStack(spacing: 8) {
                         Button {
                             navigationPath.append("wordbarn")
                         } label: {
                             HomeViewBarn(fillLevel: barnFill)
-                                .frame(width: 90, height: 80)
                         }
                         .buttonStyle(PlainButtonStyle())
                         Text("Word Barn")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
-                            .shadow(color: .black.opacity(0.5), radius: 2)
+                            .shadow(color: .black.opacity(0.4), radius: 2)
                     }
-                    .frame(width: 90, height: 80 + 24)
                     .position(
-                        x: w * 0.12 + 45,
-                        y: h * 0.65 - 30
+                        x: geo.size.width * 0.15,
+                        y: geo.size.height * 0.62
                     )
                 }
 
@@ -586,122 +582,102 @@ struct BookPages: View {
     }
 }
 
-// MARK: - Home View Barn (90x80pt decorative barn on landscape)
+// MARK: - Home View Barn (140x120pt decorative barn on landscape)
 struct HomeViewBarn: View {
     let fillLevel: Double
 
-    private let barnBodyWidth: CGFloat = 90
-    private let barnBodyHeight: CGFloat = 50
-    private let roofHeight: CGFloat = 30
-
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // 1. Barn body — plain Rectangle, 90x50pt, #C0392B, anchored to bottom
-            Rectangle()
-                .fill(Color(hex: "#C0392B"))
-                .frame(width: barnBodyWidth, height: barnBodyHeight)
-                .overlay(
-                    // 3. Left window — 14x14, 10pt from left, 8pt from top of body
-                    HStack(alignment: .top, spacing: 0) {
-                        Rectangle()
-                            .fill(Color(hex: "#F5CBA7"))
-                            .frame(width: 14, height: 14)
-                            .padding(.leading, 10)
-                            .padding(.top, 8)
-                        Spacer()
-                        // 4. Right window
-                        Rectangle()
-                            .fill(Color(hex: "#F5CBA7"))
-                            .frame(width: 14, height: 14)
-                            .padding(.trailing, 10)
-                            .padding(.top, 8)
-                    }
-                )
-                .overlay(alignment: .bottom) {
-                    // 5. Door — two Rectangles side by side, centre bottom, 2pt gap
-                    HStack(spacing: 2) {
-                        Rectangle()
-                            .fill(Color(hex: "#922B21"))
-                            .frame(width: 16, height: 26)
-                        Rectangle()
-                            .fill(Color(hex: "#922B21"))
-                            .frame(width: 16, height: 26)
-                    }
-                }
-                .overlay(alignment: .bottom) {
-                    // 6. Door X pattern — X on each door
-                    HStack(spacing: 2) {
-                        HomeBarnDoorXShape()
-                            .stroke(Color.white.opacity(0.4), lineWidth: 1.5)
-                            .frame(width: 16, height: 26)
-                        HomeBarnDoorXShape()
-                            .stroke(Color.white.opacity(0.4), lineWidth: 1.5)
-                            .frame(width: 16, height: 26)
-                    }
-                }
-                .overlay(
-                    // 7. Hay fill — grows from bottom, clipped to body (animatable)
-                    HomeBarnHayFillShape(fillLevel: fillLevel, bodyHeight: barnBodyHeight)
-                        .fill(Color(hex: "#F4D03F").opacity(0.7))
-                        .frame(width: 86, height: barnBodyHeight)
-                        .clipped()
-                        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: fillLevel)
-                )
+        GeometryReader { _ in
+            ZStack(alignment: .bottom) {
+                // LAYER 1 - Roof triangle: Path (0,55)→(140,55)→(70,0), frame 140x55, #5D3A1A
+                HomeBarnRoofTriangle()
+                    .fill(Color(hex: "#5D3A1A"))
+                    .frame(width: 140, height: 55)
+                    .offset(y: -70)
 
-            // 2. Roof — Triangle above body
-            HomeBarnRoofShape()
-                .fill(Color(hex: "#6B3A2A"))
-                .frame(width: 90, height: roofHeight)
-                .overlay(
-                    // 8. Loft opening — 18x12 at peak of roof
+                // LAYER 2 - Roof overhang: 148x5, #4A2E12, at roof base
+                Rectangle()
+                    .fill(Color(hex: "#4A2E12"))
+                    .frame(width: 148, height: 5)
+                    .offset(x: -4, y: -65)
+
+                // LAYER 3 - Barn body: 140x70, #C0392B
+                Rectangle()
+                    .fill(Color(hex: "#C0392B"))
+                    .frame(width: 140, height: 70)
+
+                // LAYER 4 - Hay fill: 134 wide, height 66*fillLevel, #F39C12 0.85, bottom-anchored, clipped
+                ZStack(alignment: .bottom) {
                     Rectangle()
-                        .fill(Color(hex: "#3D1F0F"))
-                        .frame(width: 18, height: 12)
-                        .position(x: 45, y: 6)
-                )
-                .offset(y: -barnBodyHeight)
+                        .fill(Color(hex: "#F39C12").opacity(0.85))
+                        .frame(width: 134, height: 66 * CGFloat(fillLevel))
+                        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: fillLevel)
+                }
+                .frame(width: 140, height: 70)
+                .clipped()
+
+                // LAYER 5 - Left wall shadow: 8x70, black 0.15, far left
+                Rectangle()
+                    .fill(Color.black.opacity(0.15))
+                    .frame(width: 8, height: 70)
+                    .position(x: 4, y: 85)
+
+                // LAYER 6 - Right wall shadow: 8x70, far right
+                Rectangle()
+                    .fill(Color.black.opacity(0.15))
+                    .frame(width: 8, height: 70)
+                    .position(x: 136, y: 85)
+
+                // LAYER 7 - Left window: 18x18 RoundedRectangle, #F8C471, 16pt from left, 12pt from top of body
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color(hex: "#F8C471"))
+                    .frame(width: 18, height: 18)
+                    .position(x: 25, y: 71)
+
+                // LAYER 8 - Right window: 18x18, 16pt from right
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color(hex: "#F8C471"))
+                    .frame(width: 18, height: 18)
+                    .position(x: 115, y: 71)
+
+                // LAYER 9 - Left door: 28x38 RoundedRectangle, #922B21, centre - 29pt, bottom
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color(hex: "#922B21"))
+                    .frame(width: 28, height: 38)
+                    .position(x: 41, y: 101)
+
+                // LAYER 10 - Right door: 28x38, centre + 1pt, bottom
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color(hex: "#922B21"))
+                    .frame(width: 28, height: 38)
+                    .position(x: 71, y: 101)
+
+                // LAYER 11 - Door trim: 2x38, #7B241C, centred between doors
+                Rectangle()
+                    .fill(Color(hex: "#7B241C"))
+                    .frame(width: 2, height: 38)
+                    .position(x: 70, y: 101)
+
+                // LAYER 12 - Loft window: 22x16 RoundedRectangle, #3D1F0F, 10pt from bottom of roof
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color(hex: "#3D1F0F"))
+                    .frame(width: 22, height: 16)
+                    .position(x: 70, y: 32)
+            }
         }
-        .frame(width: 90, height: 80)
+        .frame(width: 140, height: 120)
     }
 }
 
-// Roof triangle: bottom-left (0,30), bottom-right (90,30), peak (45,0) in 90x30 rect
-struct HomeBarnRoofShape: Shape {
+// Roof triangle: (0,55)→(140,55)→(70,0) in 140x55 frame
+struct HomeBarnRoofTriangle: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        let w = rect.width
-        let h = rect.height
-        path.move(to: CGPoint(x: 0, y: h))
-        path.addLine(to: CGPoint(x: w, y: h))
-        path.addLine(to: CGPoint(x: w / 2, y: 0))
+        path.move(to: CGPoint(x: 0, y: rect.height))
+        path.addLine(to: CGPoint(x: rect.width, y: rect.height))
+        path.addLine(to: CGPoint(x: rect.width / 2, y: 0))
         path.closeSubpath()
         return path
-    }
-}
-
-// X from corner to corner on a door (16x26)
-struct HomeBarnDoorXShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: 0, y: 0))
-        path.addLine(to: CGPoint(x: rect.width, y: rect.height))
-        path.move(to: CGPoint(x: rect.width, y: 0))
-        path.addLine(to: CGPoint(x: 0, y: rect.height))
-        return path
-    }
-}
-
-// Hay fill: rectangle from bottom, height = bodyHeight * fillLevel, animatable
-struct HomeBarnHayFillShape: Shape {
-    var fillLevel: Double
-    var bodyHeight: CGFloat
-    var animatableData: Double {
-        get { fillLevel }
-        set { fillLevel = newValue }
-    }
-    func path(in rect: CGRect) -> Path {
-        let h = bodyHeight * CGFloat(fillLevel)
-        return Path(CGRect(x: 0, y: rect.height - h, width: rect.width, height: h))
     }
 }
 

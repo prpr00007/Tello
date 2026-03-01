@@ -1,12 +1,12 @@
-// Purpose: Third and final onboarding page. Asks for the child's home language
+// Purpose: Third onboarding page. Asks for the child's home language
 // so Tello can include a translated sentence in each story.
-// Calls onComplete when the user taps the final button.
+// Advances to the accessibility page (page 4) when the user taps Continue.
 
 import SwiftUI
 
 struct OnboardingLanguagePage: View {
 
-    let onComplete: () -> Void
+    @Binding var currentPage: Int
     @EnvironmentObject var fontManager: FontManager
 
     @AppStorage("childName") private var childName = ""
@@ -62,8 +62,10 @@ struct OnboardingLanguagePage: View {
                 }
                 .frame(maxWidth: 620)
 
-                PrimaryButton(label: "Start Reading", icon: nil) {
-                    onComplete()
+                PrimaryButton(label: "Continue", icon: nil) {
+                    withAnimation(.easeInOut(duration: 0.35)) {
+                        currentPage = 3
+                    }
                 }
                 .frame(maxWidth: 400)
 
@@ -125,7 +127,7 @@ struct LanguageButton: View {
 }
 
 #Preview {
-    OnboardingLanguagePage(onComplete: {})
+    OnboardingLanguagePage(currentPage: .constant(2))
         .environmentObject(FontManager())
         .background(Color("AppBackground"))
 }

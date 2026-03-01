@@ -95,9 +95,6 @@ struct WordBarnView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 8)
 
-                // Accessibility Toolbar
-                AccessibilityToolbar()
-
                 if collectedWords.isEmpty {
                     emptyState
                 } else {

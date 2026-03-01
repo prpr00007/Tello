@@ -31,7 +31,7 @@ struct StoryView: View {
             Color("AppBackground").ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Home button + Accessibility Toolbar
+                // Home button
                 HStack(spacing: 16) {
                     Button {
                         speechService.stop()
@@ -50,7 +50,6 @@ struct StoryView: View {
                     }
                     .frame(minHeight: 44)
                     Spacer()
-                    AccessibilityToolbar()
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 12)

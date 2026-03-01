@@ -1,4 +1,4 @@
-// Purpose: Container for the 3-page onboarding flow.
+// Purpose: Container for the 4-page onboarding flow.
 // Manages page state and handles navigation to the main app on completion.
 
 import SwiftUI
@@ -29,26 +29,22 @@ struct OnboardingView: View {
                     .tag(0)
                 OnboardingNamePage(currentPage: $currentPage)
                     .tag(1)
-                OnboardingLanguagePage {
+                OnboardingLanguagePage(currentPage: $currentPage)
+                    .tag(2)
+                OnboardingAccessibilityPage {
                     withAnimation(.easeInOut(duration: 0.4)) {
                         hasCompletedOnboarding = true
                     }
                 }
-                .tag(2)
+                .tag(3)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .animation(.easeInOut(duration: 0.35), value: currentPage)
 
-            // MARK: - Accessibility Toolbar (always on top)
-            VStack {
-                AccessibilityToolbar()
-                Spacer()
-            }
-
             // MARK: - Page Indicator Dots (bottom)
             VStack {
                 Spacer()
-                PageIndicatorView(totalPages: 3, currentPage: currentPage)
+                PageIndicatorView(totalPages: 4, currentPage: currentPage)
                     .padding(.bottom, 40)
             }
         }

@@ -59,6 +59,9 @@ struct HomeView: View {
                 } else if destination == "wordjar" {
                     WordJarView()
                         .navigationBarHidden(true)
+                } else if destination == "settings" {
+                    SettingsView(navigationPath: $navigationPath)
+                        .navigationBarHidden(true)
                 } else {
                     LoadingView(detectedObject: destination, childName: childName, navigationPath: $navigationPath)
                         .navigationBarHidden(true)
@@ -119,7 +122,7 @@ struct HomeView: View {
 
             // Settings
             Button {
-                // Settings — Stage 8
+                navigationPath.append("settings")
             } label: {
                 Image(systemName: "gearshape.fill")
                     .font(.system(size: 22))
@@ -169,24 +172,6 @@ struct HomeView: View {
                 .cornerRadius(20)
             }
             .accessibilityLabel("My Word Jar")
-
-            // Accessibility settings
-            Button {
-                // show accessibility sheet
-            } label: {
-                HStack(spacing: 10) {
-                    Image(systemName: "textformat.size")
-                        .font(.system(size: 20))
-                    Text("Text Settings")
-                        .font(fontManager.uiFont(size: 18, weight: .semibold))
-                }
-                .foregroundColor(Color("AppText"))
-                .padding(.horizontal, 28)
-                .padding(.vertical, 16)
-                .background(.ultraThinMaterial)
-                .cornerRadius(20)
-            }
-            .accessibilityLabel("Text settings")
 
             // Reset onboarding (test only)
             Button {

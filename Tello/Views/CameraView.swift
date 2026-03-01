@@ -23,39 +23,10 @@ struct CameraView: View {
             CameraPreviewView(session: viewModel.session)
                 .ignoresSafeArea()
 
-            // MARK: - Dark overlay outside viewfinder (four rectangles, centre clear)
-            GeometryReader { geo in
-                let vfSize: CGFloat = 400
-                let centreX = geo.size.width / 2
-                let centreY = geo.size.height / 2
-                let vfLeft = centreX - vfSize / 2
-                let vfRight = centreX + vfSize / 2
-                let vfTop = centreY - vfSize / 2
-                let vfBottom = centreY + vfSize / 2
-
-                ZStack {
-                    // Top rectangle
-                    Color.black.opacity(0.45)
-                        .frame(width: geo.size.width, height: vfTop)
-                        .position(x: centreX, y: vfTop / 2)
-
-                    // Bottom rectangle
-                    Color.black.opacity(0.45)
-                        .frame(width: geo.size.width, height: geo.size.height - vfBottom)
-                        .position(x: centreX, y: vfBottom + (geo.size.height - vfBottom) / 2)
-
-                    // Left rectangle
-                    Color.black.opacity(0.45)
-                        .frame(width: vfLeft, height: vfSize)
-                        .position(x: vfLeft / 2, y: centreY)
-
-                    // Right rectangle
-                    Color.black.opacity(0.45)
-                        .frame(width: geo.size.width - vfRight, height: vfSize)
-                        .position(x: vfRight + (geo.size.width - vfRight) / 2, y: centreY)
-                }
-            }
-            .ignoresSafeArea()
+            // MARK: - Dark overlay outside viewfinder (shape with centre hole)
+            ViewfinderOverlay()
+                .fill(Color.black.opacity(0.45), style: FillStyle(eoFill: true))
+                .ignoresSafeArea()
 
             // MARK: - Flash Overlay
             if viewModel.showFlash {
@@ -377,6 +348,31 @@ struct CameraView: View {
             )
             .padding(48)
         }
+    }
+}
+
+// MARK: - Viewfinder overlay (full rect with centre hole, even-odd fill)
+struct ViewfinderOverlay: Shape {
+    let vfSize: CGFloat = 400
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+
+        // Full screen rectangle
+        path.addRect(rect)
+
+        // Cut out the centre square (this creates the hole)
+        let centreX = rect.midX
+        let centreY = rect.midY
+        let cutout = CGRect(
+            x: centreX - vfSize / 2,
+            y: centreY - vfSize / 2,
+            width: vfSize,
+            height: vfSize
+        )
+        path.addRect(cutout)
+
+        return path
     }
 }
 

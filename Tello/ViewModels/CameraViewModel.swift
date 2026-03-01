@@ -130,6 +130,7 @@ class CameraViewModel: NSObject, ObservableObject {
 
     // MARK: - Capture Photo
     func capturePhoto() {
+        print("📸 CAPTURE BUTTON TAPPED")
         print("📸 Step 1 - capturePhoto called, state: \(cameraState)")
         guard case .idle = cameraState else { return }
 

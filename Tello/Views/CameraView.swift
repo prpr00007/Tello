@@ -219,6 +219,8 @@ struct CameraView: View {
             Spacer()
 
             Button {
+                print("📸 BUTTON ACTION FIRED")
+                print("📸 Current state: \(viewModel.cameraState)")
                 viewModel.capturePhoto()
             } label: {
                 ZStack {

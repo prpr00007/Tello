@@ -407,39 +407,55 @@ struct ViewfinderBrackets: View {
     }
 }
 
-// MARK: - Camera Preview (UIViewRepresentable)
-struct CameraPreviewView: UIViewRepresentable {
+// MARK: - Camera Preview (UIViewControllerRepresentable)
+struct CameraPreviewView: UIViewControllerRepresentable {
 
     let session: AVCaptureSession
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: .zero)
-        view.backgroundColor = .black
+    func makeUIViewController(context: Context) -> UIViewController {
+        let vc = CameraPreviewViewController()
+        vc.session = session
+        return vc
+    }
 
-        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer.videoGravity = .resizeAspectFill
-        if let connection = previewLayer.connection {
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+class CameraPreviewViewController: UIViewController {
+
+    var session: AVCaptureSession?
+    private var previewLayer: AVCaptureVideoPreviewLayer?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .black
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if previewLayer == nil, let session {
+            let layer = AVCaptureVideoPreviewLayer(session: session)
+            layer.videoGravity = .resizeAspectFill
+            layer.frame = view.bounds
+            view.layer.addSublayer(layer)
+            previewLayer = layer
+        } else {
+            previewLayer?.frame = view.bounds
+        }
+
+        // Fix orientation using transform instead of connection API
+        previewLayer?.setAffineTransform(.identity)
+
+        if let connection = previewLayer?.connection {
             if connection.isVideoRotationAngleSupported(0) {
                 connection.videoRotationAngle = 0
             }
         }
-        previewLayer.frame = view.bounds
-        view.layer.addSublayer(previewLayer)
-
-        return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        DispatchQueue.main.async {
-            if let layer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer {
-                if let connection = layer.connection {
-                    if connection.isVideoRotationAngleSupported(0) {
-                        connection.videoRotationAngle = 0
-                    }
-                }
-                layer.frame = uiView.bounds
-            }
-        }
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .landscape
     }
 }
 

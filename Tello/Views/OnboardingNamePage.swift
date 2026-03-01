@@ -27,24 +27,19 @@ struct OnboardingNamePage: View {
 
             VStack(spacing: 40) {
 
-                // MARK: - Emoji + Heading
                 VStack(spacing: 20) {
-                    Text("👋")
-                        .font(.system(size: 72))
-
                     Text("What's your name?")
-                        .font(fontManager.storyFontBold(size: 40))
+                        .font(fontManager.storyFontBold(size: 38))
                         .foregroundColor(Color("AppText"))
                         .multilineTextAlignment(.center)
 
-                    Text("We'll use it in your stories!")
+                    Text("We'll use it in your stories.")
                         .font(fontManager.storyFont(size: 22))
                         .foregroundColor(Color("AppSecondaryText"))
                 }
 
-                // MARK: - Name Text Field
                 VStack(spacing: 12) {
-                    TextField("Type your name here...", text: $nameInput)
+                    TextField("Type your name here", text: $nameInput)
                         .font(fontManager.storyFont(size: 28))
                         .foregroundColor(Color("AppText"))
                         .multilineTextAlignment(.center)
@@ -72,11 +67,10 @@ struct OnboardingNamePage: View {
                 }
                 .frame(maxWidth: 520)
 
-                // MARK: - Continue Button
-                PrimaryButton(label: "That's me! →", icon: nil) {
+                PrimaryButton(label: "Continue", icon: nil) {
                     handleContinue()
                 }
-                .frame(maxWidth: 420)
+                .frame(maxWidth: 400)
                 .opacity(isNameValid ? 1.0 : 0.5)
             }
             .frame(maxWidth: 700)
@@ -97,7 +91,6 @@ struct OnboardingNamePage: View {
         }
     }
 
-    // MARK: - Handle Continue
     private func handleContinue() {
         let trimmed = nameInput.trimmingCharacters(in: .whitespaces)
         guard trimmed.count >= 2 else {

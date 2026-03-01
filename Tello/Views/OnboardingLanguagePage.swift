@@ -31,23 +31,18 @@ struct OnboardingLanguagePage: View {
 
             VStack(spacing: 40) {
 
-                // MARK: - Heading
                 VStack(spacing: 20) {
-                    Text("🌍")
-                        .font(.system(size: 72))
-
                     Text("What language do you\nspeak at home\(childName.isEmpty ? "?" : ", \(childName)?")")
-                        .font(fontManager.storyFontBold(size: 36))
+                        .font(fontManager.storyFontBold(size: 34))
                         .foregroundColor(Color("AppText"))
                         .multilineTextAlignment(.center)
 
-                    Text("We'll add a special sentence in your language to every story!")
+                    Text("We'll add a sentence in your language to every story.")
                         .font(fontManager.storyFont(size: 22))
                         .foregroundColor(Color("AppSecondaryText"))
                         .multilineTextAlignment(.center)
                 }
 
-                // MARK: - Language Grid
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible()),
@@ -56,7 +51,6 @@ struct OnboardingLanguagePage: View {
                     ForEach(languages, id: \.name) { language in
                         LanguageButton(
                             name: language.name,
-                            flag: language.flag,
                             isSelected: homeLanguage == language.name,
                             fontManager: fontManager
                         ) {
@@ -68,14 +62,13 @@ struct OnboardingLanguagePage: View {
                 }
                 .frame(maxWidth: 620)
 
-                // MARK: - Complete Button
-                PrimaryButton(label: "Start Reading! 🚀", icon: nil) {
+                PrimaryButton(label: "Start Reading", icon: nil) {
                     onComplete()
                 }
-                .frame(maxWidth: 420)
+                .frame(maxWidth: 400)
 
-                Text("Don't worry, you can always change this later")
-                    .font(fontManager.uiFont(size: 16))
+                Text("You can change this later in settings.")
+                    .font(fontManager.uiFont(size: 15))
                     .foregroundColor(Color("AppSecondaryText"))
             }
             .frame(maxWidth: 700)
@@ -97,32 +90,32 @@ struct OnboardingLanguagePage: View {
 struct LanguageButton: View {
 
     let name: String
-    let flag: String
     let isSelected: Bool
     let fontManager: FontManager
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 10) {
-                Text(flag)
-                    .font(.system(size: 40))
+            HStack(spacing: 12) {
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(Color("AppPrimary"))
+                }
                 Text(name)
                     .font(fontManager.uiFont(size: 17, weight: isSelected ? .bold : .regular))
                     .foregroundColor(isSelected ? Color("AppPrimary") : Color("AppText"))
             }
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 96)
+            .frame(minHeight: 60)
             .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(isSelected ? Color("AppPrimary").opacity(0.14) : Color("AppCardBackground"))
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(isSelected ? Color("AppPrimary").opacity(0.12) : Color("AppCardBackground"))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 24)
-                    .stroke(isSelected ? Color("AppPrimary") : Color("AppSecondaryText").opacity(0.15), lineWidth: isSelected ? 2.5 : 1)
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(isSelected ? Color("AppPrimary") : Color("AppSecondaryText").opacity(0.12), lineWidth: isSelected ? 2 : 1)
             )
-            .shadow(color: Color.black.opacity(isSelected ? 0.06 : 0.04), radius: isSelected ? 12 : 8, x: 0, y: 4)
-            .scaleEffect(isSelected ? 1.02 : 1.0)
             .animation(.spring(response: 0.35, dampingFraction: 0.7), value: isSelected)
         }
         .buttonStyle(PlainButtonStyle())

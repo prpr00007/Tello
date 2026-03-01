@@ -19,56 +19,41 @@ struct OnboardingWelcomePage: View {
 
             Spacer()
 
-            // MARK: - Content (centred, max width 700pt)
             VStack(spacing: 40) {
 
-                // Logo / Icon — storybook feel
+                // Logo — minimal icon
                 ZStack {
                     Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color("AppPrimary").opacity(0.2),
-                                    Color("AppAccent").opacity(0.12)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 180, height: 180)
+                        .fill(Color("AppPrimary").opacity(0.12))
+                        .frame(width: 120, height: 120)
 
-                    Circle()
-                        .stroke(Color("AppPrimary").opacity(0.25), lineWidth: 2)
-                        .frame(width: 180, height: 180)
-
-                    Text("📖")
-                        .font(.system(size: 88))
+                    Image(systemName: "book.closed.fill")
+                        .font(.system(size: 48, weight: .medium))
+                        .foregroundColor(Color("AppPrimary"))
                 }
                 .scaleEffect(logoScale)
                 .opacity(logoOpacity)
 
-                // App Name + Tagline
                 VStack(spacing: 16) {
                     Text("Tello")
-                        .font(fontManager.storyFontBold(size: 56))
+                        .font(fontManager.storyFontBold(size: 52))
                         .foregroundColor(Color("AppText"))
                         .opacity(titleOpacity)
 
-                    Text("Point at anything.\nWatch it become a story just for you! ✨")
-                        .font(fontManager.storyFont(size: 24))
+                    Text("Point at anything.\nWatch it become a story just for you.")
+                        .font(fontManager.storyFont(size: 22))
                         .foregroundColor(Color("AppSecondaryText"))
                         .multilineTextAlignment(.center)
                         .lineSpacing(4)
                         .opacity(taglineOpacity)
                 }
 
-                // CTA Button
-                PrimaryButton(label: "Let's Get Started!", icon: "arrow.right") {
+                PrimaryButton(label: "Get Started", icon: "arrow.right") {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
                         currentPage = 1
                     }
                 }
-                .frame(maxWidth: 420)
+                .frame(maxWidth: 400)
                 .opacity(buttonOpacity)
             }
             .frame(maxWidth: 700)

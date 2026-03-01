@@ -95,8 +95,8 @@ struct CameraView: View {
         HStack {
             NavigationLink(destination: Text("Word Jar — Stage 7").navigationBarHidden(true)) {
                 HStack(spacing: 10) {
-                    Text("🫙")
-                        .font(.system(size: 26))
+                    Image(systemName: "text.book.closed.fill")
+                        .font(.system(size: 20, weight: .medium))
                     Text("\(wordCount)")
                         .font(fontManager.uiFont(size: 19, weight: .bold))
                         .foregroundColor(.white)
@@ -113,7 +113,7 @@ struct CameraView: View {
 
             Spacer()
 
-            Text("Hi, \(childName)! 👋")
+            Text("Hi, \(childName)")
                 .font(fontManager.uiFont(size: 20, weight: .semibold))
                 .foregroundColor(.white)
                 .shadow(color: .black.opacity(0.4), radius: 6)
@@ -141,7 +141,7 @@ struct CameraView: View {
     // MARK: - Viewfinder
     var viewfinder: some View {
         VStack(spacing: 20) {
-            Text("Point at something! 📷")
+            Text("Point at something")
                 .font(fontManager.storyFontBold(size: 28))
                 .foregroundColor(.white)
                 .shadow(color: .black.opacity(0.5), radius: 8)
@@ -257,7 +257,7 @@ struct CameraView: View {
                     .foregroundColor(Color("AppText"))
                     .multilineTextAlignment(.center)
 
-                PrimaryButton(label: "Try Again 🔄", icon: nil) {
+                PrimaryButton(label: "Try Again", icon: "arrow.clockwise") {
                     viewModel.reset()
                 }
                 .frame(maxWidth: 320)
@@ -306,7 +306,7 @@ struct CameraView: View {
                 Button {
                     viewModel.reset()
                 } label: {
-                    Text("Try again 🔄")
+                    Text("Try again")
                         .font(fontManager.uiFont(size: 19))
                         .foregroundColor(Color("AppSecondaryText"))
                 }
@@ -408,7 +408,7 @@ struct SettingsPlaceholderView: View {
         ZStack {
             Color("AppBackground").ignoresSafeArea()
             VStack(spacing: 24) {
-                Text("⚙️ Settings")
+                Text("Settings")
                     .font(fontManager.storyFontBold(size: 36))
                     .foregroundColor(Color("AppText"))
                 Text("Coming soon!")

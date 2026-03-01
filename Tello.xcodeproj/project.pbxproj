@@ -18,6 +18,7 @@
 		E0100008 /* OnboardingWelcomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200008 /* OnboardingWelcomePage.swift */; };
 		E0100009 /* OnboardingNamePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200009 /* OnboardingNamePage.swift */; };
 		E0100010 /* OnboardingLanguagePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200010 /* OnboardingLanguagePage.swift */; };
+		E0100029 /* OnboardingAccessibilityPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200029 /* OnboardingAccessibilityPage.swift */; };
 		E0100011 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200011 /* CameraView.swift */; };
 		E0100012 /* AccessibilityToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200012 /* AccessibilityToolbar.swift */; };
 		E0100013 /* VisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200013 /* VisionService.swift */; };
@@ -50,6 +51,7 @@
 		E0200008 /* OnboardingWelcomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWelcomePage.swift; sourceTree = "<group>"; };
 		E0200009 /* OnboardingNamePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingNamePage.swift; sourceTree = "<group>"; };
 		E0200010 /* OnboardingLanguagePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingLanguagePage.swift; sourceTree = "<group>"; };
+		E0200029 /* OnboardingAccessibilityPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAccessibilityPage.swift; sourceTree = "<group>"; };
 		E0200011 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		E0200012 /* AccessibilityToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityToolbar.swift; sourceTree = "<group>"; };
 		E0200013 /* VisionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionService.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				E0200008 /* OnboardingWelcomePage.swift */,
 				E0200009 /* OnboardingNamePage.swift */,
 				E0200010 /* OnboardingLanguagePage.swift */,
+				E0200029 /* OnboardingAccessibilityPage.swift */,
 				E0200011 /* CameraView.swift */,
 				E0200015 /* LoadingView.swift */,
 				E0200027 /* HomeView.swift */,
@@ -261,6 +264,7 @@
 				E0100008 /* OnboardingWelcomePage.swift in Sources */,
 				E0100009 /* OnboardingNamePage.swift in Sources */,
 				E0100010 /* OnboardingLanguagePage.swift in Sources */,
+				E0100029 /* OnboardingAccessibilityPage.swift in Sources */,
 				E0100011 /* CameraView.swift in Sources */,
 				E0100012 /* AccessibilityToolbar.swift in Sources */,
 				E0100013 /* VisionService.swift in Sources */,

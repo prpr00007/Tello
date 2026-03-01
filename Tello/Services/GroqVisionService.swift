@@ -26,18 +26,22 @@ class GroqVisionService {
     /// object labels with confidence descriptions
     func identifyObject(image: UIImage) async throws -> [VisionResult] {
 
+        print("👁️ VISION SERVICE CALLED")
         print("👁️ identifyObject called")
         print("👁️ API key valid: \(!apiKey.isEmpty && apiKey != "YOUR_GROQ_API_KEY_HERE")")
 
         guard !apiKey.isEmpty && apiKey != "YOUR_GROQ_API_KEY_HERE" else {
             throw GroqError.invalidAPIKey
         }
+        print("👁️ API key check passed")
 
         // Convert image to base64
         guard let imageData = image.jpegData(compressionQuality: 0.7) else {
             throw GroqError.invalidResponse
         }
+        print("👁️ Image converted to JPEG, size: \(imageData.count) bytes")
         let base64Image = imageData.base64EncodedString()
+        print("👁️ Base64 encoded, length: \(base64Image.count)")
 
         print("👁️ Starting vision detection...")
         print("👁️ Image size: \(image.size)")
@@ -86,6 +90,7 @@ class GroqVisionService {
             "temperature": 0.1,
             "max_tokens": 200
         ]
+        print("👁️ Request body built")
 
         guard let url = URL(string: baseURL) else {
             throw GroqError.invalidResponse
@@ -97,7 +102,9 @@ class GroqVisionService {
         request.timeoutInterval = 20
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
 
+        print("👁️ Sending request to: \(baseURL)")
         let (data, response) = try await session.data(for: request)
+        print("👁️ Response received")
 
         print("👁️ Raw data length: \(data.count)")
         print("👁️ Raw response string: \(String(data: data, encoding: .utf8) ?? "nil")")

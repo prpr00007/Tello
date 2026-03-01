@@ -23,38 +23,6 @@ struct CameraView: View {
             CameraPreviewView(session: viewModel.session)
                 .ignoresSafeArea()
 
-            // MARK: - Dark overlay outside viewfinder
-            GeometryReader { geo in
-                let vfSize: CGFloat = 400
-                let cx = geo.size.width / 2
-                let cy = geo.size.height / 2
-
-                ZStack {
-                    // Top
-                    Color.black.opacity(0.5)
-                        .frame(width: geo.size.width, height: cy - vfSize / 2)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity,
-                               alignment: .topLeading)
-
-                    // Bottom
-                    Color.black.opacity(0.5)
-                        .frame(width: geo.size.width, height: cy - vfSize / 2)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity,
-                               alignment: .bottomLeading)
-
-                    // Left
-                    Color.black.opacity(0.5)
-                        .frame(width: cx - vfSize / 2, height: vfSize)
-                        .position(x: (cx - vfSize / 2) / 2, y: cy)
-
-                    // Right
-                    Color.black.opacity(0.5)
-                        .frame(width: cx - vfSize / 2, height: vfSize)
-                        .position(x: cx + vfSize / 2 + (cx - vfSize / 2) / 2, y: cy)
-                }
-            }
-            .ignoresSafeArea()
-
             // MARK: - Flash Overlay
             if viewModel.showFlash {
                 Color.white

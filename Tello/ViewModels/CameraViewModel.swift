@@ -28,25 +28,27 @@ private final class CameraSessionManager: @unchecked Sendable {
     private var isSessionRunning = false
 
     func setup() throws {
-        session.beginConfiguration()
-        defer { session.commitConfiguration() }
+        do {
+            session.beginConfiguration()
+            defer { session.commitConfiguration() }
 
-        session.sessionPreset = .photo
+            session.sessionPreset = .photo
 
-        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
-              let input = try? AVCaptureDeviceInput(device: device),
-              session.canAddInput(input) else {
-            throw SetupError.noCamera
+            guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
+                  let input = try? AVCaptureDeviceInput(device: device),
+                  session.canAddInput(input) else {
+                throw SetupError.noCamera
+            }
+            print("📷 Adding input...")
+            session.addInput(input)
+
+            guard session.canAddOutput(photoOutput) else {
+                throw SetupError.sessionFailed("Cannot add photo output")
+            }
+            print("📷 Adding output...")
+            session.addOutput(photoOutput)
         }
-        print("📷 Adding input...")
-        session.addInput(input)
-
-        guard session.canAddOutput(photoOutput) else {
-            throw SetupError.sessionFailed("Cannot add photo output")
-        }
-        print("📷 Adding output...")
-        session.addOutput(photoOutput)
-
+        // After block ends, defer has run — commitConfiguration() done. Now start.
         print("📷 Starting session...")
         session.startRunning()
         isSessionRunning = true

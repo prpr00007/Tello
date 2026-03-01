@@ -187,23 +187,6 @@ struct HomeView: View {
                 .cornerRadius(20)
             }
             .accessibilityLabel("Past Stories")
-
-            // Reset onboarding (test only)
-            Button {
-                hasCompletedOnboarding = false
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "arrow.counterclockwise")
-                    Text("Reset")
-                }
-                .font(fontManager.uiFont(size: 15))
-                .foregroundColor(.white.opacity(0.6))
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(Color.black.opacity(0.15))
-                .cornerRadius(16)
-            }
-            .accessibilityLabel("Reset onboarding — test only")
         }
         .opacity(contentOpacity)
     }

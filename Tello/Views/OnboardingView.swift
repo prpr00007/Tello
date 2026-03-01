@@ -12,11 +12,11 @@ struct OnboardingView: View {
     var body: some View {
         ZStack(alignment: .top) {
 
-            // MARK: - Background (sky to light green)
+            // MARK: - Background (light green to mint cream)
             LinearGradient(
                 colors: [
-                    Color(hex: "#B8E4F7"),
-                    Color(hex: "#F0F7EE")
+                    Color(hex: "#C8E6C9"),
+                    Color(hex: "#F4F9F0")
                 ],
                 startPoint: .top,
                 endPoint: .bottom

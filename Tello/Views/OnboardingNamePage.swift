@@ -47,7 +47,7 @@ struct OnboardingNamePage: View {
                         .padding(.vertical, 24)
                         .background(
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(Color("AppCardBackground"))
+                                .fill(Color.white)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
                                         .stroke(
@@ -55,7 +55,7 @@ struct OnboardingNamePage: View {
                                             lineWidth: isTextFieldFocused ? 3 : 1.5
                                         )
                                 )
-                                .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
+                                .shadow(color: Color(hex: "#2E3D2F").opacity(0.06), radius: 10)
                         )
                         .focused($isTextFieldFocused)
                         .offset(x: shakeOffset)

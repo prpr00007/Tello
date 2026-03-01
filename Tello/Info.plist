@@ -28,6 +28,8 @@
         <string>Tello reads stories aloud to help you learn new words.</string>
         <key>UIRequiresFullScreen</key>
         <true/>
+        <key>UIUserInterfaceStyle</key>
+        <string>Light</string>
         <key>UISupportedInterfaceOrientations~ipad</key>
         <array>
                 <string>UIInterfaceOrientationLandscapeLeft</string>

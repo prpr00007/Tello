@@ -22,7 +22,7 @@ struct SettingsView: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [Color(hex: "#B8E4F7"), Color(hex: "#F0F7EE")],
+                colors: [Color(hex: "#C8E6C9"), Color(hex: "#F4F9F0")],
                 startPoint: .top,
                 endPoint: .bottom
             )

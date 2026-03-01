@@ -149,7 +149,7 @@ struct StoryView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
         .cornerRadius(20)
-        .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
+        .shadow(color: Color(hex: "#2E3D2F").opacity(0.06), radius: 10)
         .padding(.top, 16)
         .padding(.bottom, 24)
     }
@@ -378,7 +378,7 @@ struct CelebrationView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "#2C1810").opacity(0.6).ignoresSafeArea()
+            Color(hex: "#2E3D2F").opacity(0.5).ignoresSafeArea()
 
             VStack(spacing: 28) {
                 Image(systemName: "star.fill")
@@ -414,7 +414,7 @@ struct CelebrationView: View {
             .frame(maxWidth: 560)
             .background(Color("AppCardBackground"))
             .cornerRadius(28)
-            .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
+            .shadow(color: Color(hex: "#2E3D2F").opacity(0.06), radius: 10)
             .scaleEffect(scale)
             .opacity(opacity)
         }

@@ -167,11 +167,11 @@ struct WordBarnView: View {
                             .font(.system(size: 40))
                         Text(milestone.title)
                             .font(fontManager.storyFontBold(size: 20))
-                            .foregroundColor(Color("AppSuccess"))
+                            .foregroundColor(Color("AppAccent"))
                     }
                     .padding(20)
                     .frame(maxWidth: .infinity)
-                    .background(Color("AppSuccess").opacity(0.15))
+                    .background(Color("AppAccent").opacity(0.2))
                     .cornerRadius(20)
                 }
 
@@ -181,7 +181,7 @@ struct WordBarnView: View {
             }
             .padding(28)
         }
-        .background(Color(hex: "#E8F5E3"))
+        .background(Color(hex: "#EAF4EB"))
     }
 
     // MARK: - Next Milestone Progress
@@ -289,7 +289,7 @@ struct WordBarnView: View {
     // MARK: - Milestone Overlay
     func milestoneOverlay(milestone: WordMilestone) -> some View {
         ZStack {
-            Color(hex: "#2C1810").opacity(0.5).ignoresSafeArea()
+            Color(hex: "#2E3D2F").opacity(0.5).ignoresSafeArea()
 
             VStack(spacing: 20) {
                 Text(milestone.emoji)
@@ -316,7 +316,7 @@ struct WordBarnView: View {
             .padding(40)
             .background(Color("AppCardBackground"))
             .cornerRadius(28)
-            .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
+            .shadow(color: Color(hex: "#2E3D2F").opacity(0.06), radius: 10)
             .opacity(showMilestoneAnimation ? 1.0 : 0.0)
             .animation(.easeInOut(duration: 0.3), value: showMilestoneAnimation)
         }
@@ -373,7 +373,7 @@ struct WordBarnCard: View {
                 RoundedRectangle(cornerRadius: 20)
                     .stroke(isSpeaking ? Color("AppPrimary") : Color.clear, lineWidth: 2)
             )
-            .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
+            .shadow(color: Color(hex: "#2E3D2F").opacity(0.06), radius: 10)
             .scaleEffect(isPressed ? 0.95 : 1.0)
             .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isPressed)
             .animation(.easeInOut(duration: 0.2), value: isSpeaking)

@@ -27,7 +27,7 @@ struct LoadingView: View {
         let _ = print("🎬 LoadingView body rendered")
         ZStack {
             LinearGradient(
-                colors: [Color(hex: "#B8E4F7"), Color(hex: "#F0F7EE")],
+                colors: [Color(hex: "#C8E6C9"), Color(hex: "#F4F9F0")],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -138,7 +138,7 @@ struct LoadingView: View {
             .padding(32)
             .background(Color("AppCardBackground"))
             .cornerRadius(24)
-            .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
+            .shadow(color: Color(hex: "#2E3D2F").opacity(0.06), radius: 10)
             .padding(40)
         }
     }

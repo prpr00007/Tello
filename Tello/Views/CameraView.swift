@@ -109,7 +109,7 @@ struct CameraView: View {
                 .padding(.vertical, 14)
                 .background(
                     Capsule()
-                        .fill(Color(hex: "#4CAF50").opacity(0.85))
+                        .fill(Color(hex: "#6B9E78").opacity(0.85))
                         .overlay(Capsule().stroke(Color.white.opacity(0.25), lineWidth: 1))
                 )
             }
@@ -129,7 +129,7 @@ struct CameraView: View {
                 .padding(.vertical, 14)
                 .background(
                     Capsule()
-                        .fill(Color(hex: "#4CAF50").opacity(0.85))
+                        .fill(Color(hex: "#6B9E78").opacity(0.85))
                         .overlay(Capsule().stroke(Color.white.opacity(0.25), lineWidth: 1))
                 )
             }
@@ -146,7 +146,7 @@ struct CameraView: View {
                     .frame(width: 52, height: 52)
                     .background(
                         Circle()
-                            .fill(Color(hex: "#4CAF50").opacity(0.85))
+                            .fill(Color(hex: "#6B9E78").opacity(0.85))
                             .overlay(Circle().stroke(Color.white.opacity(0.25), lineWidth: 1))
                     )
             }

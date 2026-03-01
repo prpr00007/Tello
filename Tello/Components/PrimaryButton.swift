@@ -32,7 +32,7 @@ struct PrimaryButton: View {
                 Text(label)
                     .font(.system(size: 20, weight: .bold, design: .rounded))
             }
-            .foregroundColor(Color("AppCardBackground"))
+            .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .frame(minHeight: 64)
             .background(
@@ -49,7 +49,7 @@ struct PrimaryButton: View {
                     .blendMode(.overlay)
             )
             .shadow(color: Color("AppPrimary").opacity(0.45), radius: 14, x: 0, y: 6)
-            .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
+            .shadow(color: Color(hex: "#2E3D2F").opacity(0.06), radius: 10)
             .scaleEffect(isPressed ? 0.96 : 1.0)
             .animation(.spring(response: 0.35, dampingFraction: 0.65), value: isPressed)
         }

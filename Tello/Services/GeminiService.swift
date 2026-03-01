@@ -44,6 +44,7 @@ class GeminiService {
     init(apiKey: String = Config.geminiAPIKey) {
         self.apiKey = apiKey
         self.session = URLSession.shared
+        print("🚀 GeminiService initialized")
     }
 
     // MARK: - Generate Story
@@ -52,6 +53,10 @@ class GeminiService {
         childName: String,
         homeLanguage: String
     ) async throws -> StoryModel {
+
+        print("🔑 API Key first 10 chars: \(String(apiKey.prefix(10)))")
+        print("🔑 API Key is placeholder: \(apiKey == "YOUR_GEMINI_API_KEY_HERE")")
+        print("🔑 API Key is empty: \(apiKey.isEmpty)")
 
         guard !apiKey.isEmpty && apiKey != "YOUR_GEMINI_API_KEY_HERE" else {
             throw GeminiError.invalidAPIKey

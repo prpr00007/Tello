@@ -93,7 +93,7 @@ struct CameraView: View {
     // MARK: - Top Bar
     var topBar: some View {
         HStack {
-            NavigationLink(destination: Text("Word Jar — Stage 7").navigationBarHidden(true)) {
+            NavigationLink(destination: WordJarView().navigationBarHidden(true)) {
                 HStack(spacing: 10) {
                     Image(systemName: "text.book.closed.fill")
                         .font(.system(size: 20, weight: .medium))

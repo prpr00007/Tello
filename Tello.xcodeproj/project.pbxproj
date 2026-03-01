@@ -31,6 +31,7 @@
 		E0100022 /* StoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200022 /* StoryViewModel.swift */; };
 		E0100023 /* StoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200023 /* StoryView.swift */; };
 		E0100024 /* WordCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200024 /* WordCardView.swift */; };
+		E0100025 /* WordJarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200025 /* WordJarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 		E0200022 /* StoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewModel.swift; sourceTree = "<group>"; };
 		E0200023 /* StoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryView.swift; sourceTree = "<group>"; };
 		E0200024 /* WordCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordCardView.swift; sourceTree = "<group>"; };
+		E0200025 /* WordJarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordJarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 				E0200015 /* LoadingView.swift */,
 				E0200023 /* StoryView.swift */,
 				E0200024 /* WordCardView.swift */,
+				E0200025 /* WordJarView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				E0100022 /* StoryViewModel.swift in Sources */,
 				E0100023 /* StoryView.swift in Sources */,
 				E0100024 /* WordCardView.swift in Sources */,
+				E0100025 /* WordJarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

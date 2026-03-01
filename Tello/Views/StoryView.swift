@@ -13,6 +13,7 @@ struct StoryView: View {
     @EnvironmentObject var fontManager: FontManager
     @StateObject private var speechService = SpeechService()
     @StateObject private var viewModel: StoryViewModel
+    @State private var navigateToWordJar = false
 
     init(story: StoryModel) {
         self.story = story
@@ -61,9 +62,16 @@ struct StoryView: View {
 
             // Celebration Overlay
             if viewModel.showCelebration {
-                CelebrationView(fontManager: fontManager) {
+                CelebrationView(fontManager: fontManager, onDismiss: {
                     viewModel.showCelebration = false
-                }
+                }, onViewWordJar: {
+                    navigateToWordJar = true
+                })
+            }
+
+            // Word Jar navigation
+            NavigationLink(destination: WordJarView().navigationBarHidden(true), isActive: $navigateToWordJar) {
+                EmptyView()
             }
         }
         .navigationBarHidden(true)
@@ -323,6 +331,7 @@ struct CelebrationView: View {
 
     let fontManager: FontManager
     let onDismiss: () -> Void
+    let onViewWordJar: () -> Void
 
     @AppStorage("childName") private var childName = ""
     @AppStorage("wordCount") private var wordCount = 0
@@ -349,7 +358,7 @@ struct CelebrationView: View {
                 VStack(spacing: 12) {
                     PrimaryButton(label: "See my Word Jar", icon: nil) {
                         onDismiss()
-                        // Word Jar navigation — Stage 7
+                        onViewWordJar()
                     }
 
                     Button {

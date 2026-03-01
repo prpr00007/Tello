@@ -96,6 +96,26 @@ struct CameraView: View {
     var topBar: some View {
         HStack {
             Button {
+                navigationPath = NavigationPath()
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "house.fill")
+                        .font(.system(size: 20, weight: .medium))
+                    Text("Home")
+                        .font(fontManager.uiFont(size: 16, weight: .semibold))
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(
+                    Capsule()
+                        .fill(.ultraThinMaterial)
+                        .overlay(Capsule().stroke(Color.white.opacity(0.25), lineWidth: 1))
+                )
+            }
+            .accessibilityLabel("Home")
+
+            Button {
                 showWordJar = true
             } label: {
                 HStack(spacing: 10) {

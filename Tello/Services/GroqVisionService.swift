@@ -36,6 +36,10 @@ class GroqVisionService {
         }
         let base64Image = imageData.base64EncodedString()
 
+        print("👁️ Starting vision detection...")
+        print("👁️ Image size: \(image.size)")
+        print("👁️ Base64 length: \(base64Image.count)")
+
         let prompt = """
         Look at this image and identify the most prominent object or subject.
 
@@ -92,6 +96,7 @@ class GroqVisionService {
 
         let (data, response) = try await session.data(for: request)
 
+        print("👁️ Full response data: \(String(data: data, encoding: .utf8) ?? "nil")")
         print("👁️ Vision HTTP status: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
 
         if let httpResponse = response as? HTTPURLResponse {

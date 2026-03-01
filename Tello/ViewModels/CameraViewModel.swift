@@ -188,6 +188,9 @@ class CameraViewModel: NSObject, ObservableObject {
                 cameraState = .error("Hmm, I couldn't see that clearly!\nTry pointing at something else 🔍")
             }
         } catch {
+            print("👁️ Vision error type: \(type(of: error))")
+            print("👁️ Vision error: \(error)")
+            print("👁️ Vision localized: \(error.localizedDescription)")
             cameraState = .error("Something went wrong. Try again! 🔄")
         }
     }

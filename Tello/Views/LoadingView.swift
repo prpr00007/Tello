@@ -95,8 +95,11 @@ struct LoadingView: View {
         }
         .navigationBarHidden(true)
         .navigationDestination(item: $storyToNavigate) { story in
-            StoryView(story: story)
-                .navigationBarHidden(true)
+            StoryView(story: story, onBackToRoot: {
+                dismiss()
+                dismiss()
+            })
+            .navigationBarHidden(true)
         }
         .task {
             await viewModel.generateStory()

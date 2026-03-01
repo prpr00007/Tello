@@ -9,15 +9,16 @@ struct StoryView: View {
 
     // MARK: - Properties
     let story: StoryModel
+    let onBackToRoot: () -> Void
 
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var fontManager: FontManager
     @StateObject private var speechService = SpeechService()
     @StateObject private var viewModel: StoryViewModel
     @State private var navigateToWordJar = false
 
-    init(story: StoryModel) {
+    init(story: StoryModel, onBackToRoot: @escaping () -> Void) {
         self.story = story
+        self.onBackToRoot = onBackToRoot
         let speech = SpeechService()
         _speechService = StateObject(wrappedValue: speech)
         _viewModel = StateObject(wrappedValue: StoryViewModel(story: story, speechService: speech))
@@ -34,7 +35,7 @@ struct StoryView: View {
                 HStack(spacing: 16) {
                     Button {
                         speechService.stop()
-                        dismiss()
+                        onBackToRoot()
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "chevron.left")
@@ -85,6 +86,9 @@ struct StoryView: View {
                     viewModel.showCelebration = false
                 }, onViewWordJar: {
                     navigateToWordJar = true
+                }, onReadAnotherStory: {
+                    viewModel.showCelebration = false
+                    onBackToRoot()
                 })
             }
         }
@@ -350,6 +354,7 @@ struct CelebrationView: View {
     let fontManager: FontManager
     let onDismiss: () -> Void
     let onViewWordJar: () -> Void
+    let onReadAnotherStory: () -> Void
 
     @AppStorage("childName") private var childName = ""
     @AppStorage("wordCount") private var wordCount = 0
@@ -380,7 +385,7 @@ struct CelebrationView: View {
                     }
 
                     Button {
-                        onDismiss()
+                        onReadAnotherStory()
                     } label: {
                         Text("Read another story")
                             .font(fontManager.uiFont(size: 18))

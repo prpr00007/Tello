@@ -1,5 +1,5 @@
 // Purpose: A reusable card style modifier applied to any view to give it
-// a consistent rounded white card appearance with a soft shadow.
+// a consistent rounded card appearance with a soft shadow.
 
 import SwiftUI
 
@@ -11,9 +11,16 @@ struct RoundedCardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(padding)
-            .background(Color("AppCardBackground"))
-            .cornerRadius(20)
-            .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
+            .background(
+                RoundedRectangle(cornerRadius: 28)
+                    .fill(Color("AppCardBackground"))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 28)
+                            .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+                    )
+            )
+            .shadow(color: Color.black.opacity(0.06), radius: 16, x: 0, y: 6)
+            .shadow(color: Color("AppPrimary").opacity(0.04), radius: 24, x: 0, y: 8)
     }
 }
 

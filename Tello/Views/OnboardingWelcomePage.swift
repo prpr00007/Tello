@@ -20,63 +20,75 @@ struct OnboardingWelcomePage: View {
             Spacer()
 
             // MARK: - Content (centred, max width 700pt)
-            VStack(spacing: 32) {
+            VStack(spacing: 40) {
 
-                // Logo / Icon
+                // Logo / Icon — storybook feel
                 ZStack {
                     Circle()
-                        .fill(Color("AppPrimary").opacity(0.12))
-                        .frame(width: 160, height: 160)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color("AppPrimary").opacity(0.2),
+                                    Color("AppAccent").opacity(0.12)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 180, height: 180)
+
+                    Circle()
+                        .stroke(Color("AppPrimary").opacity(0.25), lineWidth: 2)
+                        .frame(width: 180, height: 180)
 
                     Text("📖")
-                        .font(.system(size: 80))
+                        .font(.system(size: 88))
                 }
                 .scaleEffect(logoScale)
                 .opacity(logoOpacity)
 
                 // App Name + Tagline
-                VStack(spacing: 12) {
+                VStack(spacing: 16) {
                     Text("Tello")
-                        .font(fontManager.storyFontBold(size: 52))
+                        .font(fontManager.storyFontBold(size: 56))
                         .foregroundColor(Color("AppText"))
                         .opacity(titleOpacity)
 
                     Text("Point at anything.\nWatch it become a story just for you! ✨")
-                        .font(fontManager.storyFont(size: 22))
+                        .font(fontManager.storyFont(size: 24))
                         .foregroundColor(Color("AppSecondaryText"))
                         .multilineTextAlignment(.center)
+                        .lineSpacing(4)
                         .opacity(taglineOpacity)
                 }
 
                 // CTA Button
                 PrimaryButton(label: "Let's Get Started!", icon: "arrow.right") {
-                    withAnimation {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
                         currentPage = 1
                     }
                 }
-                .frame(maxWidth: 400)
+                .frame(maxWidth: 420)
                 .opacity(buttonOpacity)
             }
             .frame(maxWidth: 700)
-            .padding(.horizontal, 40)
+            .padding(.horizontal, 48)
 
             Spacer()
-            // Space for page indicator at bottom
-            Color.clear.frame(height: 60)
+            Color.clear.frame(height: 72)
         }
         .onAppear {
-            // Staggered entrance animations
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.1)) {
+            withAnimation(.spring(response: 0.65, dampingFraction: 0.72).delay(0.1)) {
                 logoScale = 1.0
                 logoOpacity = 1.0
             }
-            withAnimation(.easeOut(duration: 0.5).delay(0.4)) {
+            withAnimation(.easeOut(duration: 0.55).delay(0.4)) {
                 titleOpacity = 1.0
             }
-            withAnimation(.easeOut(duration: 0.5).delay(0.6)) {
+            withAnimation(.easeOut(duration: 0.55).delay(0.65)) {
                 taglineOpacity = 1.0
             }
-            withAnimation(.easeOut(duration: 0.5).delay(0.8)) {
+            withAnimation(.easeOut(duration: 0.55).delay(0.9)) {
                 buttonOpacity = 1.0
             }
         }

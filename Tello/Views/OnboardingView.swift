@@ -12,8 +12,16 @@ struct OnboardingView: View {
     var body: some View {
         ZStack(alignment: .top) {
 
-            // MARK: - Background
-            Color("AppBackground").ignoresSafeArea()
+            // MARK: - Background (gradient for depth)
+            LinearGradient(
+                colors: [
+                    Color("AppBackground"),
+                    Color("AppBackground").opacity(0.97)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
             // MARK: - Page Content
             TabView(selection: $currentPage) {
@@ -22,7 +30,6 @@ struct OnboardingView: View {
                 OnboardingNamePage(currentPage: $currentPage)
                     .tag(1)
                 OnboardingLanguagePage {
-                    // Called when user completes onboarding
                     withAnimation(.easeInOut(duration: 0.4)) {
                         hasCompletedOnboarding = true
                     }
@@ -42,7 +49,7 @@ struct OnboardingView: View {
             VStack {
                 Spacer()
                 PageIndicatorView(totalPages: 3, currentPage: currentPage)
-                    .padding(.bottom, 32)
+                    .padding(.bottom, 40)
             }
         }
     }
@@ -55,13 +62,15 @@ struct PageIndicatorView: View {
     let currentPage: Int
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 14) {
             ForEach(0..<totalPages, id: \.self) { index in
-                Circle()
-                    .fill(index == currentPage ? Color("AppPrimary") : Color("AppSecondaryText").opacity(0.4))
-                    .frame(width: index == currentPage ? 12 : 8,
-                           height: index == currentPage ? 12 : 8)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentPage)
+                Capsule()
+                    .fill(index == currentPage ? Color("AppPrimary") : Color("AppSecondaryText").opacity(0.35))
+                    .frame(
+                        width: index == currentPage ? 28 : 10,
+                        height: 10
+                    )
+                    .animation(.spring(response: 0.4, dampingFraction: 0.7), value: currentPage)
             }
         }
     }

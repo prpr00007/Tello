@@ -31,17 +31,14 @@ struct CameraView: View {
             // MARK: - Main Overlay UI
             VStack(spacing: 0) {
 
-                // Top Bar
                 topBar
 
                 Spacer()
 
-                // Viewfinder
                 viewfinder
 
                 Spacer()
 
-                // Bottom Bar
                 bottomBar
             }
 
@@ -60,7 +57,7 @@ struct CameraView: View {
                 lowConfidencePicker
             }
 
-            // MARK: - Navigate to Loading (value-based navigation)
+            // MARK: - Navigate to Loading
             if let object = viewModel.selectedObject {
                 NavigationLink(value: object) {
                     EmptyView()
@@ -96,67 +93,80 @@ struct CameraView: View {
     // MARK: - Top Bar
     var topBar: some View {
         HStack {
-            // Word Jar Button
             NavigationLink(destination: Text("Word Jar — Stage 7").navigationBarHidden(true)) {
-                HStack(spacing: 8) {
+                HStack(spacing: 10) {
                     Text("🫙")
-                        .font(.system(size: 24))
+                        .font(.system(size: 26))
                     Text("\(wordCount)")
-                        .font(fontManager.uiFont(size: 18, weight: .bold))
-                        .foregroundColor(Color("AppText"))
+                        .font(fontManager.uiFont(size: 19, weight: .bold))
+                        .foregroundColor(.white)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background(Color.black.opacity(0.4))
-                .cornerRadius(20)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(
+                    Capsule()
+                        .fill(.ultraThinMaterial)
+                        .overlay(Capsule().stroke(Color.white.opacity(0.25), lineWidth: 1))
+                )
             }
             .accessibilityLabel("Word Jar, \(wordCount) words collected")
 
             Spacer()
 
-            // Greeting
             Text("Hi, \(childName)! 👋")
-                .font(fontManager.uiFont(size: 18, weight: .semibold))
+                .font(fontManager.uiFont(size: 20, weight: .semibold))
                 .foregroundColor(.white)
-                .shadow(color: .black.opacity(0.5), radius: 4)
+                .shadow(color: .black.opacity(0.4), radius: 6)
+                .shadow(color: Color("AppPrimary").opacity(0.3), radius: 2)
 
             Spacer()
 
-            // Settings Button
             NavigationLink(destination: SettingsPlaceholderView().navigationBarHidden(true)) {
                 Image(systemName: "gearshape.fill")
-                    .font(.system(size: 22))
+                    .font(.system(size: 24))
                     .foregroundColor(.white)
-                    .frame(width: 44, height: 44)
-                    .background(Color.black.opacity(0.4))
-                    .cornerRadius(22)
+                    .frame(width: 52, height: 52)
+                    .background(
+                        Circle()
+                            .fill(.ultraThinMaterial)
+                            .overlay(Circle().stroke(Color.white.opacity(0.25), lineWidth: 1))
+                    )
             }
             .accessibilityLabel("Settings")
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 20)
+        .padding(.horizontal, 28)
+        .padding(.top, 24)
     }
 
     // MARK: - Viewfinder
     var viewfinder: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 20) {
             Text("Point at something! 📷")
-                .font(fontManager.storyFontBold(size: 24))
+                .font(fontManager.storyFontBold(size: 28))
                 .foregroundColor(.white)
-                .shadow(color: .black.opacity(0.6), radius: 6)
+                .shadow(color: .black.opacity(0.5), radius: 8)
+                .shadow(color: Color("AppPrimary").opacity(0.4), radius: 4)
 
             ZStack {
-                // Dimmed border area hint
-                RoundedRectangle(cornerRadius: 24)
-                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                    .frame(width: 320, height: 320)
+                RoundedRectangle(cornerRadius: 32)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.5),
+                                Color.white.opacity(0.15)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 2
+                    )
+                    .frame(width: 340, height: 340)
 
-                // Animated corner brackets
                 ViewfinderBrackets(pulse: viewfinderPulse)
-                    .frame(width: 320, height: 320)
+                    .frame(width: 340, height: 340)
             }
             .onAppear {
-                withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
+                withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
                     viewfinderPulse = true
                 }
             }
@@ -168,123 +178,146 @@ struct CameraView: View {
         HStack {
             Spacer()
 
-            // Capture Button
             Button {
                 viewModel.capturePhoto()
             } label: {
                 ZStack {
+                    // Outer glow
                     Circle()
-                        .fill(Color.white)
-                        .frame(width: 80, height: 80)
-                        .shadow(color: .black.opacity(0.3), radius: 8)
+                        .fill(Color("AppPrimary").opacity(0.25))
+                        .frame(width: 100, height: 100)
+                        .blur(radius: 12)
 
                     Circle()
-                        .fill(Color("AppPrimary"))
-                        .frame(width: 66, height: 66)
+                        .fill(.white)
+                        .frame(width: 88, height: 88)
+                        .shadow(color: .black.opacity(0.25), radius: 12)
+
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [Color("AppPrimary"), Color("AppPrimary").opacity(0.85)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 72, height: 72)
 
                     Image(systemName: "camera.fill")
-                        .font(.system(size: 28, weight: .semibold))
+                        .font(.system(size: 30, weight: .semibold))
                         .foregroundColor(.white)
                 }
             }
             .disabled(viewModel.cameraState != .idle)
-            .scaleEffect(viewModel.cameraState == .idle ? 1.0 : 0.9)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: viewModel.cameraState == .idle)
+            .scaleEffect(viewModel.cameraState == .idle ? 1.0 : 0.92)
+            .animation(.spring(response: 0.35, dampingFraction: 0.7), value: viewModel.cameraState == .idle)
             .accessibilityLabel("Take photo")
             .accessibilityHint("Takes a photo and identifies the object to create a story")
 
             Spacer()
         }
-        .padding(.bottom, 40)
+        .padding(.bottom, 48)
     }
 
     // MARK: - Processing Overlay
     var processingOverlay: some View {
         ZStack {
-            Color.black.opacity(0.5).ignoresSafeArea()
+            Color.black.opacity(0.55).ignoresSafeArea()
 
-            VStack(spacing: 20) {
+            VStack(spacing: 24) {
                 ProgressView()
                     .progressViewStyle(.circular)
                     .tint(.white)
-                    .scaleEffect(1.5)
+                    .scaleEffect(1.6)
 
                 Text("Looking at that...")
-                    .font(fontManager.storyFontBold(size: 22))
+                    .font(fontManager.storyFontBold(size: 24))
                     .foregroundColor(.white)
             }
-            .padding(40)
-            .background(Color.black.opacity(0.6))
-            .cornerRadius(24)
+            .padding(48)
+            .background(
+                RoundedRectangle(cornerRadius: 32)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 32)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    )
+            )
         }
     }
 
     // MARK: - Error Overlay
     func errorOverlay(message: String) -> some View {
         ZStack {
-            Color.black.opacity(0.4).ignoresSafeArea()
+            Color.black.opacity(0.45).ignoresSafeArea()
 
-            VStack(spacing: 24) {
+            VStack(spacing: 28) {
                 Text(message)
-                    .font(fontManager.storyFont(size: 22))
+                    .font(fontManager.storyFont(size: 24))
                     .foregroundColor(Color("AppText"))
                     .multilineTextAlignment(.center)
 
                 PrimaryButton(label: "Try Again 🔄", icon: nil) {
                     viewModel.reset()
                 }
-                .frame(maxWidth: 300)
+                .frame(maxWidth: 320)
             }
-            .padding(32)
-            .background(Color("AppCardBackground"))
-            .cornerRadius(24)
-            .shadow(radius: 20)
             .padding(40)
+            .background(
+                RoundedRectangle(cornerRadius: 32)
+                    .fill(Color("AppCardBackground"))
+                    .shadow(color: Color.black.opacity(0.2), radius: 24)
+            )
+            .padding(48)
         }
     }
 
     // MARK: - Low Confidence Picker
     var lowConfidencePicker: some View {
         ZStack {
-            Color.black.opacity(0.4).ignoresSafeArea()
+            Color.black.opacity(0.45).ignoresSafeArea()
 
-            VStack(spacing: 24) {
+            VStack(spacing: 28) {
                 Text("I see a few things!\nWhich one did you mean?")
-                    .font(fontManager.storyFontBold(size: 26))
+                    .font(fontManager.storyFontBold(size: 28))
                     .foregroundColor(Color("AppText"))
                     .multilineTextAlignment(.center)
 
-                VStack(spacing: 12) {
+                VStack(spacing: 14) {
                     ForEach(viewModel.lowConfidenceOptions, id: \.label) { option in
                         Button {
                             viewModel.selectObject(option.label)
                         } label: {
                             Text(option.label.capitalized)
-                                .font(fontManager.storyFont(size: 22))
+                                .font(fontManager.storyFont(size: 24))
                                 .foregroundColor(Color("AppText"))
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 60)
-                                .background(Color("AppBackground"))
-                                .cornerRadius(16)
+                                .frame(minHeight: 64)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(Color("AppBackground"))
+                                )
                         }
                         .buttonStyle(PlainButtonStyle())
                     }
                 }
-                .frame(maxWidth: 400)
+                .frame(maxWidth: 420)
 
                 Button {
                     viewModel.reset()
                 } label: {
                     Text("Try again 🔄")
-                        .font(fontManager.uiFont(size: 18))
+                        .font(fontManager.uiFont(size: 19))
                         .foregroundColor(Color("AppSecondaryText"))
                 }
             }
-            .padding(32)
-            .background(Color("AppCardBackground"))
-            .cornerRadius(24)
-            .shadow(radius: 20)
             .padding(40)
+            .background(
+                RoundedRectangle(cornerRadius: 32)
+                    .fill(Color("AppCardBackground"))
+                    .shadow(color: Color.black.opacity(0.2), radius: 24)
+            )
+            .padding(48)
         }
     }
 }
@@ -293,47 +326,51 @@ struct CameraView: View {
 struct ViewfinderBrackets: View {
 
     let pulse: Bool
-    let bracketLength: CGFloat = 40
-    let bracketWidth: CGFloat = 4
+    let bracketLength: CGFloat = 44
+    let bracketWidth: CGFloat = 5
 
     var body: some View {
         ZStack {
-            // Top Left
             bracketShape(rotation: 0)
-                .offset(x: -140, y: -140)
-
-            // Top Right
+                .offset(x: -152, y: -152)
             bracketShape(rotation: 90)
-                .offset(x: 140, y: -140)
-
-            // Bottom Right
+                .offset(x: 152, y: -152)
             bracketShape(rotation: 180)
-                .offset(x: 140, y: 140)
-
-            // Bottom Left
+                .offset(x: 152, y: 152)
             bracketShape(rotation: 270)
-                .offset(x: -140, y: 140)
+                .offset(x: -152, y: 152)
         }
-        .opacity(pulse ? 1.0 : 0.6)
-        .scaleEffect(pulse ? 1.04 : 1.0)
+        .opacity(pulse ? 1.0 : 0.65)
+        .scaleEffect(pulse ? 1.05 : 1.0)
+        .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: pulse)
     }
 
     func bracketShape(rotation: Double) -> some View {
         ZStack {
-            // Horizontal arm
-            RoundedRectangle(cornerRadius: 2)
-                .fill(Color.white)
+            RoundedRectangle(cornerRadius: 3)
+                .fill(
+                    LinearGradient(
+                        colors: [Color.white, Color.white.opacity(0.9)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
                 .frame(width: bracketLength, height: bracketWidth)
-                .offset(x: bracketLength / 2 - 2, y: 0)
+                .offset(x: bracketLength / 2 - 2.5, y: 0)
 
-            // Vertical arm
-            RoundedRectangle(cornerRadius: 2)
-                .fill(Color.white)
+            RoundedRectangle(cornerRadius: 3)
+                .fill(
+                    LinearGradient(
+                        colors: [Color.white, Color.white.opacity(0.9)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
                 .frame(width: bracketWidth, height: bracketLength)
-                .offset(x: 0, y: bracketLength / 2 - 2)
+                .offset(x: 0, y: bracketLength / 2 - 2.5)
         }
         .rotationEffect(.degrees(rotation))
-        .shadow(color: Color("AppPrimary").opacity(0.6), radius: 4)
+        .shadow(color: Color("AppPrimary").opacity(0.6), radius: 6)
     }
 }
 
@@ -370,12 +407,12 @@ struct SettingsPlaceholderView: View {
     var body: some View {
         ZStack {
             Color("AppBackground").ignoresSafeArea()
-            VStack(spacing: 20) {
+            VStack(spacing: 24) {
                 Text("⚙️ Settings")
-                    .font(fontManager.storyFontBold(size: 32))
+                    .font(fontManager.storyFontBold(size: 36))
                     .foregroundColor(Color("AppText"))
                 Text("Coming soon!")
-                    .font(fontManager.storyFont(size: 20))
+                    .font(fontManager.storyFont(size: 22))
                     .foregroundColor(Color("AppSecondaryText"))
                 AccessibilityToolbar()
             }

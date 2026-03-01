@@ -24,22 +24,34 @@ struct PrimaryButton: View {
         Button {
             action()
         } label: {
-            HStack(spacing: 10) {
+            HStack(spacing: 12) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 20, weight: .semibold))
+                        .font(.system(size: 22, weight: .semibold))
                 }
                 Text(label)
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
             }
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 60)
-            .background(Color("AppPrimary"))
-            .cornerRadius(16)
-            .shadow(color: Color("AppPrimary").opacity(0.4), radius: 8, x: 0, y: 4)
+            .frame(minHeight: 64)
+            .background(
+                LinearGradient(
+                    colors: [Color("AppPrimary"), Color("AppPrimary").opacity(0.85)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 28))
+            .overlay(
+                RoundedRectangle(cornerRadius: 28)
+                    .stroke(Color.white.opacity(0.25), lineWidth: 1)
+                    .blendMode(.overlay)
+            )
+            .shadow(color: Color("AppPrimary").opacity(0.45), radius: 14, x: 0, y: 6)
+            .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
             .scaleEffect(isPressed ? 0.96 : 1.0)
-            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
+            .animation(.spring(response: 0.35, dampingFraction: 0.65), value: isPressed)
         }
         .buttonStyle(PlainButtonStyle())
         .simultaneousGesture(

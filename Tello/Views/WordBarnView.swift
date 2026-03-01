@@ -167,11 +167,11 @@ struct WordBarnView: View {
                             .font(.system(size: 40))
                         Text(milestone.title)
                             .font(fontManager.storyFontBold(size: 20))
-                            .foregroundColor(Color(milestone.color))
+                            .foregroundColor(Color("AppSuccess"))
                     }
                     .padding(20)
                     .frame(maxWidth: .infinity)
-                    .background(Color(milestone.color).opacity(0.1))
+                    .background(Color("AppSuccess").opacity(0.15))
                     .cornerRadius(20)
                 }
 
@@ -181,6 +181,7 @@ struct WordBarnView: View {
             }
             .padding(28)
         }
+        .background(Color(hex: "#E8F5E3"))
     }
 
     // MARK: - Next Milestone Progress
@@ -288,7 +289,7 @@ struct WordBarnView: View {
     // MARK: - Milestone Overlay
     func milestoneOverlay(milestone: WordMilestone) -> some View {
         ZStack {
-            Color.black.opacity(0.5).ignoresSafeArea()
+            Color(hex: "#2C1810").opacity(0.5).ignoresSafeArea()
 
             VStack(spacing: 20) {
                 Text(milestone.emoji)
@@ -315,7 +316,7 @@ struct WordBarnView: View {
             .padding(40)
             .background(Color("AppCardBackground"))
             .cornerRadius(28)
-            .shadow(radius: 20)
+            .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
             .opacity(showMilestoneAnimation ? 1.0 : 0.0)
             .animation(.easeInOut(duration: 0.3), value: showMilestoneAnimation)
         }
@@ -365,14 +366,14 @@ struct WordBarnCard: View {
             .frame(minHeight: 90)
             .padding(16)
             .background(
-                RoundedRectangle(cornerRadius: 18)
+                RoundedRectangle(cornerRadius: 20)
                     .fill(isSpeaking ? Color("AppPrimary").opacity(0.1) : Color("AppCardBackground"))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 18)
+                RoundedRectangle(cornerRadius: 20)
                     .stroke(isSpeaking ? Color("AppPrimary") : Color.clear, lineWidth: 2)
             )
-            .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
+            .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
             .scaleEffect(isPressed ? 0.95 : 1.0)
             .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isPressed)
             .animation(.easeInOut(duration: 0.2), value: isSpeaking)

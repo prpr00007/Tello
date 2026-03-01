@@ -12,11 +12,11 @@ struct OnboardingView: View {
     var body: some View {
         ZStack(alignment: .top) {
 
-            // MARK: - Background (gradient for depth)
+            // MARK: - Background (sky to light green)
             LinearGradient(
                 colors: [
-                    Color("AppBackground"),
-                    Color("AppBackground").opacity(0.97)
+                    Color(hex: "#B8E4F7"),
+                    Color(hex: "#F0F7EE")
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -65,7 +65,7 @@ struct PageIndicatorView: View {
         HStack(spacing: 14) {
             ForEach(0..<totalPages, id: \.self) { index in
                 Capsule()
-                    .fill(index == currentPage ? Color("AppPrimary") : Color("AppSecondaryText").opacity(0.35))
+                    .fill(index == currentPage ? Color("AppPrimary") : Color("AppSecondaryText").opacity(0.4))
                     .frame(
                         width: index == currentPage ? 28 : 10,
                         height: 10

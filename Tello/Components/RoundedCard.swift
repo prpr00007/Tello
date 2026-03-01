@@ -19,8 +19,7 @@ struct RoundedCardModifier: ViewModifier {
                             .stroke(Color.primary.opacity(0.06), lineWidth: 1)
                     )
             )
-            .shadow(color: Color.black.opacity(0.06), radius: 16, x: 0, y: 6)
-            .shadow(color: Color("AppPrimary").opacity(0.04), radius: 24, x: 0, y: 8)
+            .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
     }
 }
 

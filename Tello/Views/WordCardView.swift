@@ -21,7 +21,7 @@ struct WordCardView: View {
     var body: some View {
         ZStack {
             // Dimmed background
-            Color.black.opacity(0.4)
+            Color(hex: "#2C1810").opacity(0.5)
                 .ignoresSafeArea()
                 .onTapGesture {
                     viewModel.showWordCard = false
@@ -116,7 +116,7 @@ struct WordCardView: View {
             .frame(maxWidth: 480)
             .background(Color("AppCardBackground"))
             .cornerRadius(28)
-            .shadow(color: .black.opacity(0.2), radius: 30)
+            .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
             .overlay(
                 // Collected confirmation burst
                 showCollectedConfirmation ?

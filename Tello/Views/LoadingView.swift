@@ -26,7 +26,12 @@ struct LoadingView: View {
     var body: some View {
         let _ = print("🎬 LoadingView body rendered")
         ZStack {
-            Color("AppBackground").ignoresSafeArea()
+            LinearGradient(
+                colors: [Color(hex: "#B8E4F7"), Color(hex: "#F0F7EE")],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
             FloatingShapeBackground()
 
@@ -133,7 +138,7 @@ struct LoadingView: View {
             .padding(32)
             .background(Color("AppCardBackground"))
             .cornerRadius(24)
-            .shadow(radius: 20)
+            .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
             .padding(40)
         }
     }

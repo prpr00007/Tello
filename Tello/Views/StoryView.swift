@@ -145,6 +145,11 @@ struct StoryView: View {
             }
             .accessibilityLabel(speechService.isSpeaking ? "Stop reading" : "Read sentence aloud")
         }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .cornerRadius(20)
+        .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
         .padding(.top, 16)
         .padding(.bottom, 24)
     }
@@ -168,6 +173,11 @@ struct StoryView: View {
                 .foregroundColor(Color("AppSecondaryText"))
         }
         .roundedCard(padding: 32)
+        .overlay(alignment: .leading) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(Color("AppPrimary"))
+                .frame(width: 4)
+        }
     }
 
     // MARK: - Navigation Bar
@@ -186,8 +196,9 @@ struct StoryView: View {
                 .foregroundColor(viewModel.currentSentenceIndex == 0 ? Color("AppSecondaryText") : Color("AppPrimary"))
                 .padding(.horizontal, 24)
                 .padding(.vertical, 14)
+                .frame(minHeight: 60)
                 .background(Color("AppCardBackground"))
-                .cornerRadius(16)
+                .cornerRadius(20)
             }
             .disabled(viewModel.currentSentenceIndex == 0)
 
@@ -367,11 +378,12 @@ struct CelebrationView: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.5).ignoresSafeArea()
+            Color(hex: "#2C1810").opacity(0.6).ignoresSafeArea()
 
             VStack(spacing: 28) {
-                Text("🌟")
+                Image(systemName: "star.fill")
                     .font(.system(size: 80))
+                    .foregroundColor(Color("AppAccent"))
 
                 Text("Amazing reading,\n\(childName)!")
                     .font(fontManager.storyFontBold(size: 36))
@@ -401,8 +413,8 @@ struct CelebrationView: View {
             .padding(40)
             .frame(maxWidth: 560)
             .background(Color("AppCardBackground"))
-            .cornerRadius(32)
-            .shadow(radius: 30)
+            .cornerRadius(28)
+            .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
             .scaleEffect(scale)
             .opacity(opacity)
         }

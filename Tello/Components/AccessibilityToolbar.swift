@@ -83,6 +83,10 @@ struct AccessibilityToolbar: View {
                     .fill(Color("AppCardBackground"))
             )
         }
+        .padding(16)
+        .background(Color("AppCardBackground"))
+        .cornerRadius(20)
+        .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
         .padding(.horizontal, 28)
         .padding(.top, 20)
     }

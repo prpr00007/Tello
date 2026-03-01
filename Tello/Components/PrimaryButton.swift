@@ -32,7 +32,7 @@ struct PrimaryButton: View {
                 Text(label)
                     .font(.system(size: 20, weight: .bold, design: .rounded))
             }
-            .foregroundColor(.white)
+            .foregroundColor(Color("AppCardBackground"))
             .frame(maxWidth: .infinity)
             .frame(minHeight: 64)
             .background(

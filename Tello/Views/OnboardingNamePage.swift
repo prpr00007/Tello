@@ -46,16 +46,16 @@ struct OnboardingNamePage: View {
                         .padding(.horizontal, 28)
                         .padding(.vertical, 24)
                         .background(
-                            RoundedRectangle(cornerRadius: 24)
+                            RoundedRectangle(cornerRadius: 20)
                                 .fill(Color("AppCardBackground"))
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 24)
+                                    RoundedRectangle(cornerRadius: 20)
                                         .stroke(
                                             isTextFieldFocused ? Color("AppPrimary") : Color("AppSecondaryText").opacity(0.2),
                                             lineWidth: isTextFieldFocused ? 3 : 1.5
                                         )
                                 )
-                                .shadow(color: Color.black.opacity(0.05), radius: 12, x: 0, y: 4)
+                                .shadow(color: Color(hex: "#2C1810").opacity(0.08), radius: 12)
                         )
                         .focused($isTextFieldFocused)
                         .offset(x: shakeOffset)

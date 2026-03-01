@@ -21,7 +21,12 @@ struct SettingsView: View {
 
     var body: some View {
         ZStack {
-            Color("AppBackground").ignoresSafeArea()
+            LinearGradient(
+                colors: [Color(hex: "#B8E4F7"), Color(hex: "#F0F7EE")],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {

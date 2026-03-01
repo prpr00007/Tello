@@ -196,21 +196,6 @@ struct CameraView: View {
         HStack {
             Spacer()
 
-            // TEMPORARY TEST BUTTON - REMOVE BEFORE SUBMISSION
-            NavigationLink(value: "dog") {
-                Text("Test Story 🧪")
-                    .font(fontManager.uiFont(size: 16, weight: .semibold))
-                    .foregroundColor(Color("AppPrimary"))
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(Color("AppCardBackground"))
-                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color("AppPrimary").opacity(0.4), lineWidth: 1))
-                    )
-            }
-            .padding(.trailing, 16)
-
             Button {
                 viewModel.capturePhoto()
             } label: {
@@ -447,13 +432,12 @@ class CameraPreviewViewController: UIViewController {
         guard let previewLayer else { return }
 
         let bounds = view.bounds
-
-        // Centre the rotated layer and fill the screen
+        let size = max(bounds.width, bounds.height)
         previewLayer.frame = CGRect(
-            x: -(bounds.height - bounds.width) / 2,
-            y: (bounds.height - bounds.width) / 2,
-            width: bounds.height,
-            height: bounds.width
+            x: -(size - bounds.width) / 2,
+            y: -(size - bounds.height) / 2,
+            width: size,
+            height: size
         )
         previewLayer.setAffineTransform(CGAffineTransform(rotationAngle: -.pi / 2))
     }

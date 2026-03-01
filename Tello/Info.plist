@@ -26,10 +26,6 @@
         <string>Tello uses the microphone to help read stories aloud.</string>
         <key>NSSpeechRecognitionUsageDescription</key>
         <string>Tello reads stories aloud to help you learn new words.</string>
-        <key>UIDeviceFamily</key>
-        <array>
-                <integer>2</integer>
-        </array>
         <key>UISupportedInterfaceOrientations~ipad</key>
         <array>
                 <string>UIInterfaceOrientationLandscapeLeft</string>

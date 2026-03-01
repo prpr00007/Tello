@@ -48,6 +48,7 @@ enum WordMilestone {
 // MARK: - Word Jar View
 struct WordJarView: View {
 
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var fontManager: FontManager
     @AppStorage("wordCount") private var wordCount = 0
     @AppStorage("collectedWordsData") private var collectedWordsData = ""
@@ -80,6 +81,25 @@ struct WordJarView: View {
             Color("AppBackground").ignoresSafeArea()
 
             VStack(spacing: 0) {
+                // Back button
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
+                        }
+                        .font(fontManager.uiFont(size: 17, weight: .semibold))
+                        .foregroundColor(Color("AppPrimary"))
+                    }
+                    .frame(minHeight: 44)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
+
                 // Accessibility Toolbar
                 AccessibilityToolbar()
 

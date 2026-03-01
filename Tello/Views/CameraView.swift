@@ -424,12 +424,33 @@ struct CameraPreviewView: UIViewRepresentable {
 
 // MARK: - Settings Placeholder
 struct SettingsPlaceholderView: View {
+
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var fontManager: FontManager
 
     var body: some View {
         ZStack {
             Color("AppBackground").ignoresSafeArea()
             VStack(spacing: 24) {
+                // Back button
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
+                        }
+                        .font(fontManager.uiFont(size: 17, weight: .semibold))
+                        .foregroundColor(Color("AppPrimary"))
+                    }
+                    .frame(minHeight: 44)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
+
                 Text("Settings")
                     .font(fontManager.storyFontBold(size: 36))
                     .foregroundColor(Color("AppText"))

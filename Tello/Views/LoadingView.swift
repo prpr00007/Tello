@@ -9,6 +9,7 @@ struct LoadingView: View {
     let detectedObject: String
     let childName: String
 
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var fontManager: FontManager
     @StateObject private var viewModel: LoadingViewModel
     @State private var storyToNavigate: StoryModel?
@@ -30,6 +31,25 @@ struct LoadingView: View {
             FloatingShapeBackground()
 
             VStack(spacing: 40) {
+
+                // Back button
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
+                        }
+                        .font(fontManager.uiFont(size: 17, weight: .semibold))
+                        .foregroundColor(Color("AppPrimary"))
+                    }
+                    .frame(minHeight: 44)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
 
                 Spacer()
 
@@ -80,6 +100,9 @@ struct LoadingView: View {
         }
         .task {
             await viewModel.generateStory()
+        }
+        .onDisappear {
+            viewModel.cancel()
         }
         .onChange(of: viewModel.generatedStory) { _, newValue in
             if let story = newValue {

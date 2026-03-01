@@ -10,6 +10,7 @@ struct StoryView: View {
     // MARK: - Properties
     let story: StoryModel
 
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var fontManager: FontManager
     @StateObject private var speechService = SpeechService()
     @StateObject private var viewModel: StoryViewModel
@@ -29,8 +30,26 @@ struct StoryView: View {
             Color("AppBackground").ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Accessibility Toolbar
-                AccessibilityToolbar()
+                // Back button + Accessibility Toolbar
+                HStack(spacing: 16) {
+                    Button {
+                        speechService.stop()
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
+                        }
+                        .font(fontManager.uiFont(size: 17, weight: .semibold))
+                        .foregroundColor(Color("AppPrimary"))
+                    }
+                    .frame(minHeight: 44)
+                    Spacer()
+                    AccessibilityToolbar()
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
 
                 // Story Content
                 VStack(spacing: 0) {

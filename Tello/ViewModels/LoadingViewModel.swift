@@ -119,6 +119,13 @@ class LoadingViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Cancel
+    /// Call when the loading view is dismissed to cancel timers and in-progress work.
+    func cancel() {
+        stageTimer?.cancel()
+        slowTimer?.cancel()
+    }
+
     // MARK: - Stage Timer
     private func startStageTimer() {
         stageTimer = Task {

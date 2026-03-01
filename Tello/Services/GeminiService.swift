@@ -217,6 +217,9 @@ class GeminiService {
             throw GeminiError.networkError(error)
         }
 
+        print("📡 Raw response: \(String(data: data, encoding: .utf8) ?? "nil")")
+        print("📡 HTTP status: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
+
         if let httpResponse = response as? HTTPURLResponse {
             switch httpResponse.statusCode {
             case 200: break

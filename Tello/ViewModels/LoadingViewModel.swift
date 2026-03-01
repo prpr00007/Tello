@@ -92,6 +92,10 @@ class LoadingViewModel: ObservableObject {
             stageTimer?.cancel()
             slowTimer?.cancel()
 
+            print("❌ Full error: \(error)")
+            print("❌ Error type: \(type(of: error))")
+            print("❌ Localized: \(error.localizedDescription)")
+
             let message: String
             if let geminiError = error as? GeminiError {
                 switch geminiError {

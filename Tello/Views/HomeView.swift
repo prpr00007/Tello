@@ -69,6 +69,8 @@ struct HomeView: View {
                     .navigationBarHidden(true)
             }
             .onAppear {
+                titleScale = 0.8
+                titleOpacity = 0
                 startAnimations()
             }
         }
@@ -413,7 +415,9 @@ struct BookView: View {
         .frame(width: bookWidth, height: bookHeight)
         .offset(y: bobOffset)
         .onAppear {
-            // Gentle bobbing animation
+            isOpening = false
+            coverAngle = 0
+            bobOffset = 0
             withAnimation(
                 .easeInOut(duration: 2.5)
                 .repeatForever(autoreverses: true)

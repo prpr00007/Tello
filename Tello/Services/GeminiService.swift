@@ -35,7 +35,7 @@ class GeminiService {
 
     // MARK: - Properties
     private let apiKey: String
-    private let baseURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+    private let baseURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
     private let session: URLSession
 
     private var wordCache: [String: WordModel] = [:]

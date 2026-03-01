@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E0100001 /* TelloApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200001 /* TelloApp.swift */; };
+		E0100026 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200026 /* AppDelegate.swift */; };
 		E0100002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200002 /* ContentView.swift */; };
 		E0100003 /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200003 /* FontManager.swift */; };
 		E0100004 /* RoundedCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200004 /* RoundedCard.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		E0200000 /* Tello.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tello.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0200001 /* TelloApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelloApp.swift; sourceTree = "<group>"; };
+		E0200026 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E0200002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E0200003 /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
 		E0200004 /* RoundedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCard.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				E0200001 /* TelloApp.swift */,
+				E0200026 /* AppDelegate.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -243,6 +246,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0100001 /* TelloApp.swift in Sources */,
+				E0100026 /* AppDelegate.swift in Sources */,
 				E0100002 /* ContentView.swift in Sources */,
 				E0100003 /* FontManager.swift in Sources */,
 				E0100004 /* RoundedCard.swift in Sources */,
@@ -421,7 +425,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -456,7 +460,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};

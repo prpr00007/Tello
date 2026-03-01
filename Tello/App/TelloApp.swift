@@ -5,6 +5,7 @@ import SwiftUI
 @main
 struct TelloApp: App {
 
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var fontManager = FontManager()
 
     var body: some Scene {

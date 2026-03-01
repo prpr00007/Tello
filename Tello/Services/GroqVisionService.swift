@@ -21,18 +21,30 @@ class GroqVisionService {
         self.apiKey = apiKey
     }
 
-    private func resizeImage(_ image: UIImage, maxDimension: CGFloat = 640) -> UIImage {
-        let size = image.size
-        let ratio = min(maxDimension / size.width, maxDimension / size.height)
+    private func prepareImage(_ image: UIImage) -> Data? {
+        // Fix orientation first
+        UIGraphicsBeginImageContextWithOptions(image.size, false, 1.0)
+        image.draw(in: CGRect(origin: .zero, size: image.size))
+        let normalised = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
 
-        // Only resize if image is larger than maxDimension
-        guard ratio < 1 else { return image }
+        guard let normalisedImage = normalised else { return nil }
 
-        let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-        return renderer.image { _ in
-            image.draw(in: CGRect(origin: .zero, size: newSize))
-        }
+        // Resize to max 512px
+        let maxDimension: CGFloat = 512
+        let scale = min(maxDimension / normalisedImage.size.width,
+                        maxDimension / normalisedImage.size.height)
+        let newSize = scale < 1 ? CGSize(
+            width: normalisedImage.size.width * scale,
+            height: normalisedImage.size.height * scale
+        ) : normalisedImage.size
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        normalisedImage.draw(in: CGRect(origin: .zero, size: newSize))
+        let resized = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return resized?.jpegData(compressionQuality: 0.6)
     }
 
     // MARK: - Identify Object
@@ -47,20 +59,17 @@ class GroqVisionService {
         }
         print("👁️ STEP 2 - API key valid")
 
-        let resized = resizeImage(image, maxDimension: 640)
-        print("👁️ STEP 3 - resized to \(resized.size)")
-
-        guard let imageData = resized.jpegData(compressionQuality: 0.5) else {
-            print("👁️ STEP 4 FAILED - could not convert to JPEG")
+        guard let imageData = prepareImage(image) else {
+            print("👁️ STEP 3 FAILED - could not prepare image")
             throw GroqError.invalidResponse
         }
-        print("👁️ STEP 4 - JPEG size: \(imageData.count) bytes")
+        print("👁️ STEP 3 - image prepared, \(imageData.count) bytes")
 
         let base64Image = imageData.base64EncodedString()
-        print("👁️ STEP 5 - base64 length: \(base64Image.count)")
+        print("👁️ STEP 4 - base64 length: \(base64Image.count)")
 
         // Build request
-        print("👁️ STEP 6 - building request")
+        print("👁️ STEP 5 - building request")
 
         let prompt = """
         Look at this image and identify the most prominent object or subject.
@@ -107,7 +116,7 @@ class GroqVisionService {
         ]
 
         guard let url = URL(string: baseURL) else {
-            print("👁️ STEP 6 FAILED - invalid URL: \(baseURL)")
+            print("👁️ STEP 5 FAILED - invalid URL: \(baseURL)")
             throw GroqError.invalidResponse
         }
         var request = URLRequest(url: url)
@@ -118,7 +127,7 @@ class GroqVisionService {
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
         } catch {
-            print("👁️ STEP 6 FAILED - request body serialization: \(error)")
+            print("👁️ STEP 5 FAILED - request body serialization: \(error)")
             throw error
         }
 
@@ -126,11 +135,11 @@ class GroqVisionService {
         let response: URLResponse
         do {
             (data, response) = try await session.data(for: request)
-            print("👁️ STEP 7 - got response")
-            print("👁️ STEP 7 - HTTP status: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
-            print("👁️ STEP 7 - raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+            print("👁️ STEP 6 - got response")
+            print("👁️ STEP 6 - HTTP status: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
+            print("👁️ STEP 6 - raw: \(String(data: data, encoding: .utf8) ?? "nil")")
         } catch {
-            print("👁️ STEP 7 FAILED - network error: \(error)")
+            print("👁️ STEP 6 FAILED - network error: \(error)")
             throw GroqError.networkError(error)
         }
 
@@ -138,13 +147,13 @@ class GroqVisionService {
             switch httpResponse.statusCode {
             case 200: break
             case 429:
-                print("👁️ STEP 8 FAILED - rate limited")
+                print("👁️ STEP 7 FAILED - rate limited")
                 throw GroqError.rateLimited
             case 401, 403:
-                print("👁️ STEP 8 FAILED - invalid API key (HTTP \(httpResponse.statusCode))")
+                print("👁️ STEP 7 FAILED - invalid API key (HTTP \(httpResponse.statusCode))")
                 throw GroqError.invalidAPIKey
             default:
-                print("👁️ STEP 8 FAILED - invalid response HTTP \(httpResponse.statusCode)")
+                print("👁️ STEP 7 FAILED - invalid response HTTP \(httpResponse.statusCode)")
                 throw GroqError.invalidResponse
             }
         }

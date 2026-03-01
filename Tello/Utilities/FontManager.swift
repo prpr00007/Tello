@@ -3,6 +3,29 @@
 
 import SwiftUI
 
+// MARK: - Dyslexia Text Modifier
+struct DyslexiaTextModifier: ViewModifier {
+    let enabled: Bool
+
+    func body(content: Content) -> some View {
+        if enabled {
+            content
+                .tracking(1.5)
+                .lineSpacing(6)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        } else {
+            content
+        }
+    }
+}
+
+// MARK: - View Extension
+extension View {
+    func dyslexiaStyle(enabled: Bool) -> some View {
+        modifier(DyslexiaTextModifier(enabled: enabled))
+    }
+}
+
 // MARK: - Font Style Enum
 enum AppFontStyle {
     case standard
@@ -34,8 +57,6 @@ class FontManager: ObservableObject {
     func storyFont(size baseSize: CGFloat) -> Font {
         let size = baseSize * sizeMultiplier
         if isDyslexicFont {
-            // OpenDyslexic is not bundled by default — fallback to a rounded system font
-            // with increased tracking (letter spacing) to simulate dyslexia-friendly reading
             return .system(size: size, weight: .regular, design: .rounded)
         } else {
             return .system(size: size, weight: .regular, design: .default)

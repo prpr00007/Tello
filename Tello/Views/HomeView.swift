@@ -89,7 +89,7 @@ struct HomeView: View {
                     .foregroundColor(.white)
                     .shadow(color: .black.opacity(0.2), radius: 4)
 
-                Text("Hi, \(childName)! 👋")
+                Text("Hi, \(childName)!")
                     .font(fontManager.storyFont(size: 20))
                     .foregroundColor(.white.opacity(0.9))
                     .shadow(color: .black.opacity(0.2), radius: 3)

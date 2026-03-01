@@ -210,6 +210,7 @@ struct StoryView: View {
                 Text(story.title)
                     .font(fontManager.storyFontBold(size: 28))
                     .foregroundColor(Color("AppText"))
+                    .dyslexiaStyle(enabled: fontManager.isDyslexicFont)
 
                 Text("About: \(story.detectedObject.capitalized)")
                     .font(fontManager.uiFont(size: 16))
@@ -375,6 +376,7 @@ struct WordButton: View {
             Text(word)
                 .font(fontManager.storyFont(size: 26))
                 .foregroundColor(isHighlighted ? Color("AppPrimary") : Color("AppText"))
+                .dyslexiaStyle(enabled: fontManager.isDyslexicFont)
                 .underline(isHighlighted)
                 .padding(.horizontal, 4)
                 .padding(.vertical, 8)

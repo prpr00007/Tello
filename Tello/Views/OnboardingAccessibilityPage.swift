@@ -142,6 +142,8 @@ struct FontOptionCard: View {
                     .font(useRounded
                         ? Font.system(size: 18, weight: .regular, design: .rounded)
                         : Font.system(size: 18, weight: .regular, design: .default))
+                    .tracking(useRounded ? 1.5 : 0)
+                    .lineSpacing(useRounded ? 4 : 0)
                     .foregroundColor(Color("AppText"))
                     .multilineTextAlignment(.center)
             }

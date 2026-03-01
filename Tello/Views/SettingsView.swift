@@ -47,7 +47,7 @@ struct SettingsView: View {
                     .frame(minHeight: 44)
                     .padding(.bottom, 8)
 
-                    Text("Settings ⚙️")
+                    Text("Settings")
                         .font(fontManager.storyFontBold(size: 36))
                         .foregroundColor(Color("AppText"))
                         .padding(.bottom, 8)
@@ -190,7 +190,7 @@ struct SettingsView: View {
                             .foregroundColor(Color("AppSecondaryText"))
                         Picker("Home Language", selection: $homeLanguage) {
                             ForEach(languages, id: \.name) { language in
-                                Text("\(language.flag) \(language.name)")
+                                Text(language.name)
                                     .font(fontManager.uiFont(size: 17))
                                     .tag(language.name)
                             }

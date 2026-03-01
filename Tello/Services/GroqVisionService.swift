@@ -99,6 +99,8 @@ class GroqVisionService {
 
         let (data, response) = try await session.data(for: request)
 
+        print("👁️ Raw data length: \(data.count)")
+        print("👁️ Raw response string: \(String(data: data, encoding: .utf8) ?? "nil")")
         print("👁️ Full response data: \(String(data: data, encoding: .utf8) ?? "nil")")
         print("👁️ Vision HTTP status: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
 
@@ -111,36 +113,42 @@ class GroqVisionService {
             }
         }
 
-        // Parse response envelope
-        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let choices = json["choices"] as? [[String: Any]],
-              let firstChoice = choices.first,
-              let message = firstChoice["message"] as? [String: Any],
-              let text = message["content"] as? String else {
-            throw GroqError.emptyResponse
-        }
-
-        print("👁️ Vision raw response: \(text)")
-
-        // Clean and parse the JSON array
-        let cleaned = cleanJSON(text)
-        guard let arrayData = cleaned.data(using: .utf8) else {
-            return try parseManually(cleaned)
-        }
-
         do {
-            let items = try JSONDecoder().decode([GroqVisionItem].self, from: arrayData)
-            let visionResults = items.prefix(3).map { item in
-                VisionResult(
-                    label: item.label.lowercased(),
-                    rawLabel: item.label,
-                    confidence: Float(item.confidence)
-                )
+            // Parse response envelope
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let choices = json["choices"] as? [[String: Any]],
+                  let firstChoice = choices.first,
+                  let message = firstChoice["message"] as? [String: Any],
+                  let text = message["content"] as? String else {
+                throw GroqError.emptyResponse
             }
-            print("👁️ Vision results: \(visionResults.map { "\($0.label) \($0.confidence)" })")
-            return Array(visionResults)
+
+            print("👁️ Vision raw response: \(text)")
+
+            // Clean and parse the JSON array
+            let cleaned = cleanJSON(text)
+            guard let arrayData = cleaned.data(using: .utf8) else {
+                return try parseManually(cleaned)
+            }
+
+            do {
+                let items = try JSONDecoder().decode([GroqVisionItem].self, from: arrayData)
+                let visionResults = items.prefix(3).map { item in
+                    VisionResult(
+                        label: item.label.lowercased(),
+                        rawLabel: item.label,
+                        confidence: Float(item.confidence)
+                    )
+                }
+                print("👁️ Vision results: \(visionResults.map { "\($0.label) \($0.confidence)" })")
+                return Array(visionResults)
+            } catch {
+                return try parseManually(cleaned)
+            }
         } catch {
-            return try parseManually(cleaned)
+            print("👁️ PARSE ERROR: \(error)")
+            print("👁️ PARSE ERROR TYPE: \(type(of: error))")
+            throw error
         }
     }
 

@@ -178,6 +178,21 @@ struct CameraView: View {
         HStack {
             Spacer()
 
+            // TEMPORARY TEST BUTTON - REMOVE BEFORE SUBMISSION
+            NavigationLink(value: "dog") {
+                Text("Test Story 🧪")
+                    .font(fontManager.uiFont(size: 16, weight: .semibold))
+                    .foregroundColor(Color("AppPrimary"))
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(Color("AppCardBackground"))
+                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color("AppPrimary").opacity(0.4), lineWidth: 1))
+                    )
+            }
+            .padding(.trailing, 16)
+
             Button {
                 viewModel.capturePhoto()
             } label: {

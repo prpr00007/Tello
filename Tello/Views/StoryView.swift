@@ -16,6 +16,9 @@ struct StoryView: View {
     @StateObject private var viewModel: StoryViewModel
     @State private var navigateToWordJar = false
 
+    @AppStorage("hasSeenWordTapTip") private var hasSeenWordTapTip = false
+    @State private var showWordTip = false
+
     init(story: StoryModel, navigationPath: Binding<NavigationPath>) {
         self.story = story
         _navigationPath = navigationPath
@@ -94,15 +97,110 @@ struct StoryView: View {
                     navigationPath = NavigationPath()
                 })
             }
+
+            // One-time word tap tip overlay
+            if showWordTip {
+                ZStack {
+                    // Dim background
+                    Color(hex: "#2E3D2F").opacity(0.35)
+                        .ignoresSafeArea()
+                        .onTapGesture { dismissTip() }
+
+                    // Tip card
+                    VStack(alignment: .leading, spacing: 20) {
+
+                        Text("Here is how it works")
+                            .font(fontManager.storyFontBold(size: 26))
+                            .foregroundColor(Color("AppText"))
+
+                        // Row 1
+                        HStack(spacing: 16) {
+                            Image(systemName: "hand.tap.fill")
+                                .font(.system(size: 28))
+                                .foregroundColor(Color("AppPrimary"))
+                                .frame(width: 48)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Tap any word")
+                                    .font(fontManager.storyFontBold(size: 20))
+                                    .foregroundColor(Color("AppText"))
+                                Text("Hear it spoken and see what it means")
+                                    .font(fontManager.storyFont(size: 17))
+                                    .foregroundColor(Color("AppSecondaryText"))
+                            }
+                        }
+
+                        // Row 2
+                        HStack(spacing: 16) {
+                            Image(systemName: "building.2.fill")
+                                .font(.system(size: 28))
+                                .foregroundColor(Color("AppPrimary"))
+                                .frame(width: 48)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Add to your Word Barn")
+                                    .font(fontManager.storyFontBold(size: 20))
+                                    .foregroundColor(Color("AppText"))
+                                Text("Build your collection word by word")
+                                    .font(fontManager.storyFont(size: 17))
+                                    .foregroundColor(Color("AppSecondaryText"))
+                            }
+                        }
+
+                        // Row 3
+                        HStack(spacing: 16) {
+                            Image(systemName: "play.circle.fill")
+                                .font(.system(size: 28))
+                                .foregroundColor(Color("AppPrimary"))
+                                .frame(width: 48)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Read it aloud")
+                                    .font(fontManager.storyFontBold(size: 20))
+                                    .foregroundColor(Color("AppText"))
+                                Text("Press the read button to hear the full sentence")
+                                    .font(fontManager.storyFont(size: 17))
+                                    .foregroundColor(Color("AppSecondaryText"))
+                            }
+                        }
+
+                        PrimaryButton(label: "Got it, let me read!", icon: nil) {
+                            dismissTip()
+                        }
+                        .padding(.top, 8)
+                    }
+                    .padding(36)
+                    .frame(maxWidth: 520)
+                    .background(Color("AppCardBackground"))
+                    .cornerRadius(28)
+                    .shadow(color: Color(hex: "#2E3D2F").opacity(0.15), radius: 20)
+                    .scaleEffect(showWordTip ? 1.0 : 0.85)
+                    .opacity(showWordTip ? 1.0 : 0.0)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.7), value: showWordTip)
+                }
+            }
         }
         .navigationBarHidden(true)
         .navigationDestination(isPresented: $navigateToWordJar) {
             WordBarnView()
                 .navigationBarHidden(true)
         }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                if !hasSeenWordTapTip {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                        showWordTip = true
+                    }
+                }
+            }
+        }
         .onDisappear {
             speechService.stop()
         }
+    }
+
+    private func dismissTip() {
+        withAnimation(.easeOut(duration: 0.2)) {
+            showWordTip = false
+        }
+        hasSeenWordTapTip = true
     }
 
     // MARK: - Story Title

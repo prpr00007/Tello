@@ -117,14 +117,6 @@ struct CameraView: View {
 
             Spacer()
 
-            Text("Hi, \(childName)")
-                .font(fontManager.uiFont(size: 20, weight: .semibold))
-                .foregroundColor(.white)
-                .shadow(color: .black.opacity(0.4), radius: 6)
-                .shadow(color: Color("AppPrimary").opacity(0.3), radius: 2)
-
-            Spacer()
-
             NavigationLink(destination: SettingsPlaceholderView().navigationBarHidden(true)) {
                 Image(systemName: "gearshape.fill")
                     .font(.system(size: 24))

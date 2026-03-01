@@ -429,29 +429,35 @@ class CameraPreviewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
+        setupPreview()
+    }
+
+    private func setupPreview() {
+        guard let session else { return }
+
+        let layer = AVCaptureVideoPreviewLayer(session: session)
+        layer.videoGravity = .resizeAspectFill
+        view.layer.addSublayer(layer)
+        previewLayer = layer
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        if previewLayer == nil, let session {
-            let layer = AVCaptureVideoPreviewLayer(session: session)
-            layer.videoGravity = .resizeAspectFill
-            layer.frame = view.bounds
-            view.layer.addSublayer(layer)
-            previewLayer = layer
-        } else {
-            previewLayer?.frame = view.bounds
-        }
+        guard let previewLayer else { return }
 
-        // Fix orientation using transform instead of connection API
-        previewLayer?.setAffineTransform(.identity)
+        // Get the current device orientation
+        let bounds = view.bounds
 
-        if let connection = previewLayer?.connection {
-            if connection.isVideoRotationAngleSupported(0) {
-                connection.videoRotationAngle = 0
-            }
-        }
+        // Swap width and height and apply rotation transform
+        // to correct the 90 degree rotation issue on iPad
+        previewLayer.frame = CGRect(
+            x: -(bounds.height - bounds.width) / 2,
+            y: (bounds.height - bounds.width) / 2,
+            width: bounds.height,
+            height: bounds.width
+        )
+        previewLayer.setAffineTransform(CGAffineTransform(rotationAngle: .pi / 2))
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {

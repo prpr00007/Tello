@@ -60,6 +60,16 @@ class VisionService {
         "bridge": "bridge", "castle": "castle"
     ]
 
+    // MARK: - Normalise orientation (rotate to .up before cropping)
+    private func normaliseOrientation(_ image: UIImage) -> UIImage {
+        guard image.imageOrientation != .up else { return image }
+        UIGraphicsBeginImageContextWithOptions(image.size, false, image.scale)
+        image.draw(in: CGRect(origin: .zero, size: image.size))
+        let normalised = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return normalised ?? image
+    }
+
     // MARK: - Crop to Center
     private func cropToCenter(image: UIImage) -> UIImage {
         guard let cgImage = image.cgImage else { return image }
@@ -81,7 +91,8 @@ class VisionService {
     // MARK: - Classify Image
     /// Classifies a UIImage and returns up to 3 results sorted by confidence
     func classify(image: UIImage) async throws -> [VisionResult] {
-        let croppedImage = cropToCenter(image: image)
+        let normalised = normaliseOrientation(image)
+        let croppedImage = cropToCenter(image: normalised)
         guard let cgImage = croppedImage.cgImage else {
             throw VisionError.invalidImage
         }
@@ -98,10 +109,10 @@ class VisionService {
                     return
                 }
 
-                // Filter to confidence > 0.1 and take top 5
+                // Filter to confidence > 0.05 and take top 8
                 let filtered = observations
-                    .filter { $0.confidence > 0.1 }
-                    .prefix(5)
+                    .filter { $0.confidence > 0.05 }
+                    .prefix(8)
 
                 // Map to VisionResult with child-friendly labels
                 let results = filtered.compactMap { observation -> VisionResult? in

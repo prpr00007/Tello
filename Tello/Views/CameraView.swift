@@ -364,7 +364,15 @@ struct ViewfinderOverlayShape: Shape {
         p.addRect(rect)
         let x = (rect.width - size) / 2
         let y = (rect.height - size) / 2
-        p.addRoundedRect(in: CGRect(x: x, y: y, width: size, height: size), cornerRadius: cornerRadius)
+        p.addRoundedRect(
+            in: CGRect(x: x, y: y, width: size, height: size),
+            cornerRadii: RectangleCornerRadii(
+                topLeading: cornerRadius,
+                bottomLeading: cornerRadius,
+                bottomTrailing: cornerRadius,
+                topTrailing: cornerRadius
+            )
+        )
         return p
     }
 }

@@ -88,7 +88,7 @@ class CameraViewModel: NSObject, ObservableObject {
     private var photoContinuation: CheckedContinuation<UIImage, Error>?
 
     // MARK: - Services
-    private let visionService = GroqVisionService()
+    private let groqVisionService = GroqVisionService()
 
     // MARK: - Setup
     func setupCamera() async {
@@ -171,37 +171,34 @@ class CameraViewModel: NSObject, ObservableObject {
 
     // MARK: - Classify Image
     private func classifyImage(_ image: UIImage) async {
-        print("🔍 classifyImage() called")
-        print("🔍 Calling GroqVisionService...")
+        print("🔍 classifyImage START")
         do {
-            let results = try await visionService.identifyObject(image: image)
+            print("🔍 About to call GroqVisionService")
+            let results = try await groqVisionService.identifyObject(image: image)
+            print("🔍 Got results: \(results.count)")
 
             if results.isEmpty {
-                // Nothing recognised
-                cameraState = .error("Hmm, I couldn't see that clearly!\nTry pointing at something else 🔍")
+                cameraState = .error("Hmm I could not see that clearly!\nTry pointing at something else")
                 return
             }
 
             let top = results[0]
+            print("🔍 Top result: \(top.label) confidence: \(top.confidence)")
 
             if top.confidence >= 0.5 {
-                // High confidence — auto proceed
                 selectedObject = top.label
-                print("✅ High confidence: \(top.label) (\(top.confidence))")
             } else if top.confidence >= 0.2 {
-                // Low confidence — show picker
                 lowConfidenceOptions = results
                 cameraState = .lowConfidence
-                print("⚠️ Low confidence options: \(results.map { "\($0.label) \($0.confidence)" })")
             } else {
-                // Too low — nothing useful found
-                cameraState = .error("Hmm, I couldn't see that clearly!\nTry pointing at something else 🔍")
+                cameraState = .error("Hmm I could not see that clearly!\nTry pointing at something else")
             }
         } catch {
-            print("🔍 CAUGHT ANY ERROR: \(error)")
+            print("🔍 ERROR: \(error)")
             print("🔍 ERROR TYPE: \(type(of: error))")
             cameraState = .error("Something went wrong. Try again!")
         }
+        print("🔍 classifyImage END")
     }
 
     // MARK: - Select Object (from low confidence picker)

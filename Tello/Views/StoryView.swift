@@ -9,16 +9,16 @@ struct StoryView: View {
 
     // MARK: - Properties
     let story: StoryModel
-    let onBackToRoot: () -> Void
+    @Binding var navigationPath: NavigationPath
 
     @EnvironmentObject var fontManager: FontManager
     @StateObject private var speechService = SpeechService()
     @StateObject private var viewModel: StoryViewModel
     @State private var navigateToWordJar = false
 
-    init(story: StoryModel, onBackToRoot: @escaping () -> Void) {
+    init(story: StoryModel, navigationPath: Binding<NavigationPath>) {
         self.story = story
-        self.onBackToRoot = onBackToRoot
+        _navigationPath = navigationPath
         let speech = SpeechService()
         _speechService = StateObject(wrappedValue: speech)
         _viewModel = StateObject(wrappedValue: StoryViewModel(story: story, speechService: speech))
@@ -31,18 +31,22 @@ struct StoryView: View {
             Color("AppBackground").ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Back button + Accessibility Toolbar
+                // Home button + Accessibility Toolbar
                 HStack(spacing: 16) {
                     Button {
                         speechService.stop()
-                        onBackToRoot()
+                        navigationPath = NavigationPath()
                     } label: {
                         HStack(spacing: 6) {
-                            Image(systemName: "chevron.left")
-                            Text("Back")
+                            Image(systemName: "house.fill")
+                            Text("Home")
                         }
                         .font(fontManager.uiFont(size: 17, weight: .semibold))
                         .foregroundColor(Color("AppPrimary"))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(Color("AppPrimary").opacity(0.1))
+                        .cornerRadius(20)
                     }
                     .frame(minHeight: 44)
                     Spacer()
@@ -88,7 +92,7 @@ struct StoryView: View {
                     navigateToWordJar = true
                 }, onReadAnotherStory: {
                     viewModel.showCelebration = false
-                    onBackToRoot()
+                    navigationPath = NavigationPath()
                 })
             }
         }

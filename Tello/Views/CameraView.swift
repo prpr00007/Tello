@@ -6,6 +6,7 @@ import AVFoundation
 
 struct CameraView: View {
 
+    @Binding var navigationPath: NavigationPath
     @EnvironmentObject var fontManager: FontManager
     @AppStorage("childName") private var childName = ""
     @AppStorage("wordCount") private var wordCount = 0
@@ -58,17 +59,13 @@ struct CameraView: View {
                 lowConfidencePicker
             }
 
-            // MARK: - Navigate to Loading
-            if let object = viewModel.selectedObject {
-                NavigationLink(value: object) {
-                    EmptyView()
-                }
-            }
+            // MARK: - Navigate to Loading (path appended in onChange)
         }
         .navigationBarHidden(true)
-        .navigationDestination(for: String.self) { object in
-            LoadingView(detectedObject: object, childName: childName)
-                .navigationBarHidden(true)
+        .onChange(of: viewModel.selectedObject) { _, newValue in
+            if let object = newValue {
+                navigationPath.append(object)
+            }
         }
         .navigationDestination(isPresented: $showWordJar) {
             WordJarView()

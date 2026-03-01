@@ -8,15 +8,15 @@ struct LoadingView: View {
 
     let detectedObject: String
     let childName: String
+    @Binding var navigationPath: NavigationPath
 
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var fontManager: FontManager
     @StateObject private var viewModel: LoadingViewModel
-    @State private var storyToNavigate: StoryModel?
 
-    init(detectedObject: String, childName: String) {
+    init(detectedObject: String, childName: String, navigationPath: Binding<NavigationPath>) {
         self.detectedObject = detectedObject
         self.childName = childName
+        _navigationPath = navigationPath
         _viewModel = StateObject(wrappedValue: LoadingViewModel(
             detectedObject: detectedObject,
             childName: childName
@@ -32,17 +32,21 @@ struct LoadingView: View {
 
             VStack(spacing: 40) {
 
-                // Back button
+                // Home button
                 HStack {
                     Button {
-                        dismiss()
+                        navigationPath = NavigationPath()
                     } label: {
                         HStack(spacing: 6) {
-                            Image(systemName: "chevron.left")
-                            Text("Back")
+                            Image(systemName: "house.fill")
+                            Text("Home")
                         }
                         .font(fontManager.uiFont(size: 17, weight: .semibold))
                         .foregroundColor(Color("AppPrimary"))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(Color("AppPrimary").opacity(0.1))
+                        .cornerRadius(20)
                     }
                     .frame(minHeight: 44)
                     Spacer()
@@ -94,13 +98,6 @@ struct LoadingView: View {
             }
         }
         .navigationBarHidden(true)
-        .navigationDestination(item: $storyToNavigate) { story in
-            StoryView(story: story, onBackToRoot: {
-                dismiss()
-                dismiss()
-            })
-            .navigationBarHidden(true)
-        }
         .task {
             await viewModel.generateStory()
         }
@@ -109,7 +106,7 @@ struct LoadingView: View {
         }
         .onChange(of: viewModel.generatedStory) { _, newValue in
             if let story = newValue {
-                storyToNavigate = story
+                navigationPath.append(story)
             }
         }
     }
@@ -245,6 +242,6 @@ private struct FloatingShapeBackground: View {
 }
 
 #Preview {
-    LoadingView(detectedObject: "dog", childName: "Jake")
+    LoadingView(detectedObject: "dog", childName: "Jake", navigationPath: .constant(NavigationPath()))
         .environmentObject(FontManager())
 }

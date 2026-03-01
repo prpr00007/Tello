@@ -14,10 +14,10 @@ enum CameraState: Equatable {
     case error(String)  // Something went wrong
 }
 
-// MARK: - Setup Result
-private enum SetupResult {
-    case success
+// MARK: - Setup Error
+private enum SetupError: Error {
     case noCamera
+    case sessionFailed(String)
 }
 
 // MARK: - Camera Session Manager (nonisolated — runs AVFoundation off main actor)
@@ -27,8 +27,7 @@ private final class CameraSessionManager: @unchecked Sendable {
     let photoOutput = AVCapturePhotoOutput()
     private var isSessionRunning = false
 
-    func setup() -> SetupResult {
-        var configured = false
+    func setup() throws {
         session.beginConfiguration()
         defer { session.commitConfiguration() }
 
@@ -37,21 +36,21 @@ private final class CameraSessionManager: @unchecked Sendable {
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
               let input = try? AVCaptureDeviceInput(device: device),
               session.canAddInput(input) else {
-            return .noCamera
+            throw SetupError.noCamera
         }
+        print("📷 Adding input...")
         session.addInput(input)
 
-        if session.canAddOutput(photoOutput) {
-            session.addOutput(photoOutput)
+        guard session.canAddOutput(photoOutput) else {
+            throw SetupError.sessionFailed("Cannot add photo output")
         }
+        print("📷 Adding output...")
+        session.addOutput(photoOutput)
 
-        configured = true
-
-        if configured {
-            session.startRunning()
-            isSessionRunning = true
-        }
-        return .success
+        print("📷 Starting session...")
+        session.startRunning()
+        isSessionRunning = true
+        print("📷 Camera setup complete")
     }
 
     func stopSession() {
@@ -91,8 +90,10 @@ class CameraViewModel: NSObject, ObservableObject {
 
     // MARK: - Setup
     func setupCamera() async {
+        print("📷 Starting camera setup...")
         // Check permission (main actor)
         let status = AVCaptureDevice.authorizationStatus(for: .video)
+        print("📷 Permission status: \(status.rawValue)")
         switch status {
         case .notDetermined:
             let granted = await AVCaptureDevice.requestAccess(for: .video)
@@ -109,12 +110,19 @@ class CameraViewModel: NSObject, ObservableObject {
 
         // Configure session off main actor
         let manager = sessionManager
-        let result = await Task.detached(priority: .userInitiated) {
-            manager.setup()
+        let setupError: Error? = await Task.detached(priority: .userInitiated) {
+            do {
+                try manager.setup()
+                return nil as Error?
+            } catch {
+                print("📷 Setup failed: \(error)")
+                return error
+            }
         }.value
 
-        if result == .noCamera {
-            cameraState = .error("Camera not available")
+        if let error = setupError {
+            cameraState = .error("Camera couldn't start. Please try again.")
+            print("📷 Camera setup error: \(error)")
         }
     }
 

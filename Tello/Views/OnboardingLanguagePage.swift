@@ -64,7 +64,7 @@ struct OnboardingLanguagePage: View {
 
                 PrimaryButton(label: "Continue", icon: nil) {
                     withAnimation(.easeInOut(duration: 0.35)) {
-                        currentPage = 3
+                        currentPage = 4
                     }
                 }
                 .frame(maxWidth: 400)

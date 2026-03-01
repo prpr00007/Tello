@@ -8,6 +8,8 @@ struct SettingsView: View {
     @Binding var navigationPath: NavigationPath
     @EnvironmentObject var fontManager: FontManager
     @AppStorage("childName") private var childName = ""
+    @AppStorage("childAge") private var childAge = 7
+    @AppStorage("difficultyLevel") private var difficultyLevel = "explorer"
     @AppStorage("homeLanguage") private var homeLanguage = "English"
 
     private let languages: [(name: String, flag: String)] = [
@@ -49,6 +51,34 @@ struct SettingsView: View {
                         .font(fontManager.storyFontBold(size: 36))
                         .foregroundColor(Color("AppText"))
                         .padding(.bottom, 8)
+
+                    // Reading Level (age) section
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Reading Level")
+                            .font(fontManager.uiFont(size: 15, weight: .semibold))
+                            .foregroundColor(Color("AppSecondaryText"))
+
+                        HStack(spacing: 12) {
+                            ForEach(Array(4...11), id: \.self) { age in
+                                settingsAgeButton(age: age)
+                            }
+                        }
+
+                        let level = DifficultyLevel.from(age: childAge)
+                        VStack(spacing: 4) {
+                            Text("You are a \(level.displayName) reader!")
+                                .font(fontManager.storyFontBold(size: 18))
+                                .foregroundColor(Color("AppText"))
+                            Text(level.ageRange)
+                                .font(fontManager.storyFont(size: 15))
+                                .foregroundColor(Color("AppSecondaryText"))
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity)
+                        .background(Color("AppCardBackground"))
+                        .cornerRadius(16)
+                    }
+                    .roundedCard(padding: 16)
 
                     // Dyslexia font row
                     VStack(alignment: .leading, spacing: 12) {
@@ -175,5 +205,30 @@ struct SettingsView: View {
                 .padding(.bottom, 48)
             }
         }
+    }
+
+    private func settingsAgeButton(age: Int) -> some View {
+        let isSelected = childAge == age
+        return Button {
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
+                childAge = age
+                difficultyLevel = DifficultyLevel.from(age: age).rawValue
+                if age <= 6 {
+                    fontManager.textSizePreference = 3
+                }
+            }
+        } label: {
+            Text("\(age)")
+                .font(fontManager.uiFont(size: 20, weight: .bold))
+                .foregroundColor(isSelected ? .white : Color("AppText"))
+                .frame(minWidth: 60, minHeight: 60)
+                .background(Circle().fill(isSelected ? Color("AppPrimary") : Color("AppCardBackground")))
+                .overlay(
+                    Circle()
+                        .stroke(isSelected ? Color.clear : Color("AppSecondaryText").opacity(0.2), lineWidth: 1)
+                )
+        }
+        .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel("Age \(age), \(isSelected ? "selected" : "")")
     }
 }

@@ -61,21 +61,26 @@ class GroqService {
             throw GroqError.invalidAPIKey
         }
 
+        let rawLevel = UserDefaults.standard.string(forKey: "difficultyLevel") ?? "explorer"
+        let level = DifficultyLevel(rawValue: rawLevel) ?? .explorer
+
         let languageInstruction = homeLanguage != "English"
             ? "End the story with one sentence translated into \(homeLanguage), labelled '(In \(homeLanguage):)'."
             : ""
 
+        let sentenceList = (1...level.sentenceCount).map { "Sentence \($0)." }.joined(separator: ", ")
+
         let prompt = """
         You are a friendly storyteller for children aged 5-10.
 
-        Write a short story with EXACTLY 6 sentences about a \(object) for a child named \(childName).
+        Write a short story with EXACTLY \(level.sentenceCount) sentences about a \(object) for a child named \(childName).
 
         Rules:
-        - Use simple words (maximum 2 syllables where possible)
+        - \(level.vocabularyInstruction)
         - Make it fun, warm, and imaginative
         - Include \(childName)'s name naturally in the story
         - The \(object) must be the main character or central theme
-        - Each sentence should be short (maximum 12 words)
+        - Each sentence should be short (maximum \(level.maxWordsPerSentence) words)
         - Return valid JSON only. No trailing commas. No markdown. No backticks. No extra text.
         \(languageInstruction)
 
@@ -84,7 +89,7 @@ class GroqService {
         You MUST respond with ONLY valid JSON in this exact format:
         {
           "title": "A short fun story title here",
-          "sentences": ["Sentence 1.", "Sentence 2.", "Sentence 3.", "Sentence 4.", "Sentence 5.", "Sentence 6."],
+          "sentences": [\(sentenceList)],
           "keyWords": ["word1", "word2", "word3", "word4", "word5"]
         }
         """
@@ -101,8 +106,8 @@ class GroqService {
         do {
             let decoded = try JSONDecoder().decode(GeminiStoryResponse.self, from: data)
 
-            guard decoded.sentences.count == 6 else {
-                throw GroqError.parsingError("Expected 6 sentences, got \(decoded.sentences.count)")
+            guard decoded.sentences.count == level.sentenceCount else {
+                throw GroqError.parsingError("Expected \(level.sentenceCount) sentences, got \(decoded.sentences.count)")
             }
 
             let story = StoryModel(

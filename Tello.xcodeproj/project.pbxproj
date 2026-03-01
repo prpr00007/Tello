@@ -27,6 +27,10 @@
 		E0100018 /* WordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200018 /* WordModel.swift */; };
 		E0100019 /* GroqService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200019 /* GroqService.swift */; };
 		E0100020 /* LoadingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200020 /* LoadingViewModel.swift */; };
+		E0100021 /* SpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200021 /* SpeechService.swift */; };
+		E0100022 /* StoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200022 /* StoryViewModel.swift */; };
+		E0100023 /* StoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200023 /* StoryView.swift */; };
+		E0100024 /* WordCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200024 /* WordCardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +55,10 @@
 		E0200018 /* WordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordModel.swift; sourceTree = "<group>"; };
 		E0200019 /* GroqService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroqService.swift; sourceTree = "<group>"; };
 		E0200020 /* LoadingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewModel.swift; sourceTree = "<group>"; };
+		E0200021 /* SpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechService.swift; sourceTree = "<group>"; };
+		E0200022 /* StoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewModel.swift; sourceTree = "<group>"; };
+		E0200023 /* StoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryView.swift; sourceTree = "<group>"; };
+		E0200024 /* WordCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordCardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +121,8 @@
 				E0200010 /* OnboardingLanguagePage.swift */,
 				E0200011 /* CameraView.swift */,
 				E0200015 /* LoadingView.swift */,
+				E0200023 /* StoryView.swift */,
+				E0200024 /* WordCardView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -122,6 +132,7 @@
 			children = (
 				E0200014 /* CameraViewModel.swift */,
 				E0200020 /* LoadingViewModel.swift */,
+				E0200022 /* StoryViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -140,6 +151,7 @@
 			children = (
 				E0200013 /* VisionService.swift */,
 				E0200019 /* GroqService.swift */,
+				E0200021 /* SpeechService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -246,6 +258,10 @@
 				E0100018 /* WordModel.swift in Sources */,
 				E0100019 /* GroqService.swift in Sources */,
 				E0100020 /* LoadingViewModel.swift in Sources */,
+				E0100021 /* SpeechService.swift in Sources */,
+				E0100022 /* StoryViewModel.swift in Sources */,
+				E0100023 /* StoryView.swift in Sources */,
+				E0100024 /* WordCardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

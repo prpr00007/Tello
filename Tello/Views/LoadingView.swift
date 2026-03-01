@@ -75,7 +75,7 @@ struct LoadingView: View {
         }
         .navigationBarHidden(true)
         .navigationDestination(item: $storyToNavigate) { story in
-            StoryPlaceholderView(story: story)
+            StoryView(story: story)
                 .navigationBarHidden(true)
         }
         .task {
@@ -215,42 +215,6 @@ private struct FloatingShapeBackground: View {
                 )
             }
         }
-    }
-}
-
-// MARK: - Story Placeholder (Stage 6)
-struct StoryPlaceholderView: View {
-
-    let story: StoryModel
-    @EnvironmentObject var fontManager: FontManager
-
-    var body: some View {
-        ZStack {
-            Color("AppBackground").ignoresSafeArea()
-            ScrollView {
-                VStack(spacing: 20) {
-                    Text(story.title)
-                        .font(fontManager.storyFontBold(size: 32))
-                        .foregroundColor(Color("AppText"))
-                        .multilineTextAlignment(.center)
-
-                    ForEach(story.sentences, id: \.self) { sentence in
-                        Text(sentence)
-                            .font(fontManager.storyFont(size: 20))
-                            .foregroundColor(Color("AppText"))
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                    }
-
-                    Text("Interactive story view coming in Stage 6.")
-                        .font(fontManager.uiFont(size: 16))
-                        .foregroundColor(Color("AppSecondaryText"))
-                        .padding(.top, 20)
-                }
-                .padding(40)
-            }
-        }
-        .navigationBarHidden(true)
     }
 }
 

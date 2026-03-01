@@ -1,0 +1,380 @@
+// Purpose: The main interactive story reading experience.
+// Displays story one sentence at a time with tappable words,
+// speech synthesis, and word collection.
+
+import SwiftUI
+import AVFoundation
+
+struct StoryView: View {
+
+    // MARK: - Properties
+    let story: StoryModel
+
+    @EnvironmentObject var fontManager: FontManager
+    @StateObject private var speechService = SpeechService()
+    @StateObject private var viewModel: StoryViewModel
+
+    init(story: StoryModel) {
+        self.story = story
+        let speech = SpeechService()
+        _speechService = StateObject(wrappedValue: speech)
+        _viewModel = StateObject(wrappedValue: StoryViewModel(story: story, speechService: speech))
+    }
+
+    // MARK: - Body
+    var body: some View {
+        ZStack {
+            // Background
+            Color("AppBackground").ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                // Accessibility Toolbar
+                AccessibilityToolbar()
+
+                // Story Content
+                VStack(spacing: 0) {
+                    // Story Title
+                    storyTitle
+
+                    Spacer()
+
+                    // Current Sentence
+                    sentenceCard
+
+                    Spacer()
+
+                    // Navigation
+                    navigationBar
+                }
+                .frame(maxWidth: 800)
+                .padding(.horizontal, 32)
+            }
+
+            // Word Card Sheet
+            if viewModel.showWordCard, let word = viewModel.selectedWord {
+                WordCardView(
+                    word: word,
+                    viewModel: viewModel,
+                    fontManager: fontManager
+                )
+            }
+
+            // Celebration Overlay
+            if viewModel.showCelebration {
+                CelebrationView(fontManager: fontManager) {
+                    viewModel.showCelebration = false
+                }
+            }
+        }
+        .navigationBarHidden(true)
+        .onDisappear {
+            speechService.stop()
+        }
+    }
+
+    // MARK: - Story Title
+    var storyTitle: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(story.title)
+                    .font(fontManager.storyFontBold(size: 28))
+                    .foregroundColor(Color("AppText"))
+
+                Text("About: \(story.detectedObject.capitalized)")
+                    .font(fontManager.uiFont(size: 16))
+                    .foregroundColor(Color("AppSecondaryText"))
+            }
+
+            Spacer()
+
+            // Auto-read button
+            Button {
+                if speechService.isSpeaking {
+                    speechService.stop()
+                    viewModel.highlightedWordIndex = nil
+                } else {
+                    viewModel.autoReadCurrentSentence()
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: speechService.isSpeaking ? "stop.circle.fill" : "play.circle.fill")
+                        .font(.system(size: 28))
+                        .foregroundColor(Color("AppPrimary"))
+                    Text(speechService.isSpeaking ? "Stop" : "Read aloud")
+                        .font(fontManager.uiFont(size: 16, weight: .medium))
+                        .foregroundColor(Color("AppPrimary"))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color("AppPrimary").opacity(0.1))
+                .cornerRadius(20)
+            }
+            .accessibilityLabel(speechService.isSpeaking ? "Stop reading" : "Read sentence aloud")
+        }
+        .padding(.top, 16)
+        .padding(.bottom, 24)
+    }
+
+    // MARK: - Sentence Card
+    var sentenceCard: some View {
+        VStack(spacing: 32) {
+            // Interactive word-by-word sentence
+            InteractiveSentenceView(
+                sentence: viewModel.currentSentence,
+                highlightedWordIndex: viewModel.highlightedWordIndex,
+                collectedWords: viewModel.collectedWords,
+                fontManager: fontManager
+            ) { word in
+                viewModel.wordTapped(word)
+            }
+
+            // Sentence number indicator
+            Text("Sentence \(viewModel.currentSentenceIndex + 1) of \(story.sentences.count)")
+                .font(fontManager.uiFont(size: 15))
+                .foregroundColor(Color("AppSecondaryText"))
+        }
+        .roundedCard(padding: 32)
+    }
+
+    // MARK: - Navigation Bar
+    var navigationBar: some View {
+        HStack(spacing: 32) {
+            // Previous button
+            Button {
+                viewModel.previousSentence()
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .semibold))
+                    Text("Back")
+                        .font(fontManager.uiFont(size: 18, weight: .medium))
+                }
+                .foregroundColor(viewModel.currentSentenceIndex == 0 ? Color("AppSecondaryText") : Color("AppPrimary"))
+                .padding(.horizontal, 24)
+                .padding(.vertical, 14)
+                .background(Color("AppCardBackground"))
+                .cornerRadius(16)
+            }
+            .disabled(viewModel.currentSentenceIndex == 0)
+
+            // Progress dots
+            HStack(spacing: 10) {
+                ForEach(0..<story.sentences.count, id: \.self) { index in
+                    Circle()
+                        .fill(index == viewModel.currentSentenceIndex ? Color("AppPrimary") : Color("AppSecondaryText").opacity(0.3))
+                        .frame(
+                            width: index == viewModel.currentSentenceIndex ? 12 : 8,
+                            height: index == viewModel.currentSentenceIndex ? 12 : 8
+                        )
+                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: viewModel.currentSentenceIndex)
+                }
+            }
+
+            // Next button
+            PrimaryButton(
+                label: viewModel.isLastSentence ? "Finish!" : "Next →",
+                icon: nil
+            ) {
+                viewModel.nextSentence()
+            }
+            .frame(maxWidth: 180)
+        }
+        .padding(.vertical, 24)
+    }
+}
+
+// MARK: - Interactive Sentence View
+struct InteractiveSentenceView: View {
+
+    let sentence: String
+    let highlightedWordIndex: Int?
+    let collectedWords: Set<String>
+    let fontManager: FontManager
+    let onWordTap: (String) -> Void
+
+    private var words: [String] {
+        sentence.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
+    }
+
+    var body: some View {
+        // Use a flow layout for words that wraps naturally
+        FlowLayout(spacing: 8) {
+            ForEach(Array(words.enumerated()), id: \.offset) { index, word in
+                WordButton(
+                    word: word,
+                    index: index,
+                    isHighlighted: highlightedWordIndex == index,
+                    isCollected: collectedWords.contains(
+                        word.trimmingCharacters(in: .punctuationCharacters).lowercased()
+                    ),
+                    fontManager: fontManager,
+                    onTap: { onWordTap(word) }
+                )
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+// MARK: - Word Button
+struct WordButton: View {
+
+    let word: String
+    let index: Int
+    let isHighlighted: Bool
+    let isCollected: Bool
+    let fontManager: FontManager
+    let onTap: () -> Void
+
+    @State private var isPressed = false
+
+    var body: some View {
+        Button(action: onTap) {
+            Text(word)
+                .font(fontManager.storyFont(size: 26))
+                .foregroundColor(isHighlighted ? Color("AppPrimary") : Color("AppText"))
+                .underline(isHighlighted)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isHighlighted ? Color("AppPrimary").opacity(0.12) : Color.clear)
+                )
+                .overlay(
+                    // Small star if word is collected
+                    isCollected ?
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Image(systemName: "star.fill")
+                                .font(.system(size: 8))
+                                .foregroundColor(Color("AppAccent"))
+                                .offset(x: 2, y: -2)
+                        }
+                        Spacer()
+                    } : nil
+                )
+                .scaleEffect(isPressed ? 0.92 : 1.0)
+                .animation(.spring(response: 0.2, dampingFraction: 0.6), value: isPressed)
+                .animation(.easeInOut(duration: 0.2), value: isHighlighted)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .frame(minHeight: 44)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isPressed = true }
+                .onEnded { _ in isPressed = false }
+        )
+        .accessibilityLabel("Word: \(word)\(isCollected ? ", collected" : "")")
+        .accessibilityHint("Tap to hear this word and see its meaning")
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+// MARK: - Flow Layout
+struct FlowLayout: Layout {
+
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let result = FlowResult(in: proposal.replacingUnspecifiedDimensions().width,
+                                subviews: subviews, spacing: spacing)
+        return result.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = FlowResult(in: bounds.width, subviews: subviews, spacing: spacing)
+        for (index, frame) in result.frames.enumerated() {
+            subviews[index].place(at: CGPoint(x: bounds.minX + frame.minX,
+                                               y: bounds.minY + frame.minY),
+                                   proposal: ProposedViewSize(frame.size))
+        }
+    }
+
+    struct FlowResult {
+        var frames: [CGRect] = []
+        var size: CGSize = .zero
+
+        init(in maxWidth: CGFloat, subviews: Subviews, spacing: CGFloat) {
+            var x: CGFloat = 0
+            var y: CGFloat = 0
+            var lineHeight: CGFloat = 0
+            var maxX: CGFloat = 0
+
+            for subview in subviews {
+                let size = subview.sizeThatFits(.unspecified)
+                if x + size.width > maxWidth && x > 0 {
+                    x = 0
+                    y += lineHeight + spacing
+                    lineHeight = 0
+                }
+                frames.append(CGRect(origin: CGPoint(x: x, y: y), size: size))
+                x += size.width + spacing
+                maxX = max(maxX, x)
+                lineHeight = max(lineHeight, size.height)
+            }
+            self.size = CGSize(width: maxX, height: y + lineHeight)
+        }
+    }
+}
+
+// MARK: - Celebration View
+struct CelebrationView: View {
+
+    let fontManager: FontManager
+    let onDismiss: () -> Void
+
+    @AppStorage("childName") private var childName = ""
+    @AppStorage("wordCount") private var wordCount = 0
+    @State private var scale: CGFloat = 0.5
+    @State private var opacity: CGFloat = 0
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.5).ignoresSafeArea()
+
+            VStack(spacing: 28) {
+                Text("🌟")
+                    .font(.system(size: 80))
+
+                Text("Amazing reading,\n\(childName)!")
+                    .font(fontManager.storyFontBold(size: 36))
+                    .foregroundColor(Color("AppText"))
+                    .multilineTextAlignment(.center)
+
+                Text("You've collected \(wordCount) words so far!")
+                    .font(fontManager.storyFont(size: 22))
+                    .foregroundColor(Color("AppSecondaryText"))
+
+                VStack(spacing: 12) {
+                    PrimaryButton(label: "See my Word Jar", icon: nil) {
+                        onDismiss()
+                        // Word Jar navigation — Stage 7
+                    }
+
+                    Button {
+                        onDismiss()
+                    } label: {
+                        Text("Read another story")
+                            .font(fontManager.uiFont(size: 18))
+                            .foregroundColor(Color("AppSecondaryText"))
+                    }
+                }
+                .frame(maxWidth: 360)
+            }
+            .padding(40)
+            .frame(maxWidth: 560)
+            .background(Color("AppCardBackground"))
+            .cornerRadius(32)
+            .shadow(radius: 30)
+            .scaleEffect(scale)
+            .opacity(opacity)
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                scale = 1.0
+                opacity = 1.0
+            }
+        }
+    }
+}

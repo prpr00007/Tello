@@ -14,7 +14,7 @@ class GroqVisionService {
 
     private let apiKey: String
     private let baseURL = "https://api.groq.com/openai/v1/chat/completions"
-    private let model = "llama-3.2-11b-vision-preview"
+    private let model = "meta-llama/llama-4-scout-17b-16e-instruct"
     private let session = URLSession.shared
 
     init(apiKey: String = Config.groqAPIKey) {

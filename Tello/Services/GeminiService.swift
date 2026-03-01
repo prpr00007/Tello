@@ -35,7 +35,7 @@ class GeminiService {
 
     // MARK: - Properties
     private let apiKey: String
-    private let baseURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+    private let baseURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent"
     private let session: URLSession
 
     private var wordCache: [String: WordModel] = [:]
@@ -77,6 +77,7 @@ class GeminiService {
         - Include \(childName)'s name naturally in the story
         - The \(object) must be the main character or central theme
         - Each sentence should be short (maximum 12 words)
+        - Return valid JSON only. No trailing commas. No markdown. No backticks. No extra text.
         \(languageInstruction)
         
         Also provide exactly 5 interesting or important words from the story as keyWords.
@@ -261,6 +262,9 @@ class GeminiService {
         if cleaned.hasSuffix("```") {
             cleaned = String(cleaned.dropLast(3))
         }
+        cleaned = cleaned.replacingOccurrences(of: ",\n]", with: "\n]")
+        cleaned = cleaned.replacingOccurrences(of: ", ]", with: "]")
+        cleaned = cleaned.replacingOccurrences(of: ",]", with: "]")
         return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

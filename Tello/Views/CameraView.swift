@@ -418,6 +418,11 @@ struct CameraPreviewView: UIViewRepresentable {
 
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.videoGravity = .resizeAspectFill
+        if let connection = previewLayer.connection {
+            if connection.isVideoOrientationSupported {
+                connection.videoOrientation = .landscapeRight
+            }
+        }
         previewLayer.frame = view.bounds
         view.layer.addSublayer(previewLayer)
 
@@ -427,6 +432,11 @@ struct CameraPreviewView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: Context) {
         DispatchQueue.main.async {
             if let layer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer {
+                if let connection = layer.connection {
+                    if connection.isVideoOrientationSupported {
+                        connection.videoOrientation = .landscapeRight
+                    }
+                }
                 layer.frame = uiView.bounds
             }
         }

@@ -130,7 +130,7 @@ class CameraViewModel: NSObject, ObservableObject {
 
     // MARK: - Capture Photo
     func capturePhoto() {
-        print("📸 capturePhoto() called")
+        print("📸 Step 1 - capturePhoto called, state: \(cameraState)")
         guard case .idle = cameraState else { return }
 
         // Flash effect
@@ -138,14 +138,21 @@ class CameraViewModel: NSObject, ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
             withAnimation(.easeOut(duration: 0.2)) { self.showFlash = false }
         }
+        print("📸 Step 2 - flash triggered")
 
         cameraState = .capturing
+        print("📸 Step 3 - state set to capturing")
 
         Task {
+            print("📸 Step 4 - inside Task")
             do {
                 let image = try await capturePhotoAsync()
+                print("📸 Step 5 - photo captured, size: \(image.size)")
                 capturedImage = image
+                print("📸 Step 6 - image assigned")
                 cameraState = .processing
+                print("📸 Step 7 - state set to processing")
+                print("📸 Step 8 - about to classify")
                 await classifyImage(image)
             } catch {
                 cameraState = .error("Couldn't take photo. Try again!")
@@ -225,6 +232,7 @@ extension CameraViewModel: AVCapturePhotoCaptureDelegate {
     nonisolated func photoOutput(_ output: AVCapturePhotoOutput,
                                   didFinishProcessingPhoto photo: AVCapturePhoto,
                                   error: Error?) {
+        print("📸 Delegate called - error: \(String(describing: error))")
         if let error {
             Task { @MainActor in
                 self.photoContinuation?.resume(throwing: error)

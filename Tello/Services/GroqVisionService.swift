@@ -21,6 +21,20 @@ class GroqVisionService {
         self.apiKey = apiKey
     }
 
+    private func resizeImage(_ image: UIImage, maxDimension: CGFloat = 640) -> UIImage {
+        let size = image.size
+        let ratio = min(maxDimension / size.width, maxDimension / size.height)
+
+        // Only resize if image is larger than maxDimension
+        guard ratio < 1 else { return image }
+
+        let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+        }
+    }
+
     // MARK: - Identify Object
     /// Takes a UIImage and returns the top 3 child-friendly
     /// object labels with confidence descriptions
@@ -35,17 +49,17 @@ class GroqVisionService {
         }
         print("👁️ API key check passed")
 
+        let resized = resizeImage(image, maxDimension: 640)
+        print("👁️ Original size: \(image.size), Resized: \(resized.size)")
+
         // Convert image to base64
-        guard let imageData = image.jpegData(compressionQuality: 0.7) else {
+        guard let imageData = resized.jpegData(compressionQuality: 0.5) else {
             throw GroqError.invalidResponse
         }
-        print("👁️ Image converted to JPEG, size: \(imageData.count) bytes")
         let base64Image = imageData.base64EncodedString()
-        print("👁️ Base64 encoded, length: \(base64Image.count)")
+        print("👁️ JPEG size: \(imageData.count) bytes, Base64: \(base64Image.count) chars")
 
         print("👁️ Starting vision detection...")
-        print("👁️ Image size: \(image.size)")
-        print("👁️ Base64 length: \(base64Image.count)")
 
         let prompt = """
         Look at this image and identify the most prominent object or subject.

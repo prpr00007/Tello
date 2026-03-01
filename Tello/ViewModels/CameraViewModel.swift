@@ -130,6 +130,7 @@ class CameraViewModel: NSObject, ObservableObject {
 
     // MARK: - Capture Photo
     func capturePhoto() {
+        print("📸 capturePhoto() called")
         guard case .idle = cameraState else { return }
 
         // Flash effect
@@ -163,6 +164,8 @@ class CameraViewModel: NSObject, ObservableObject {
 
     // MARK: - Classify Image
     private func classifyImage(_ image: UIImage) async {
+        print("🔍 classifyImage() called")
+        print("🔍 Calling GroqVisionService...")
         do {
             let results = try await visionService.identifyObject(image: image)
 
@@ -188,10 +191,9 @@ class CameraViewModel: NSObject, ObservableObject {
                 cameraState = .error("Hmm, I couldn't see that clearly!\nTry pointing at something else 🔍")
             }
         } catch {
-            print("👁️ Vision error type: \(type(of: error))")
-            print("👁️ Vision error: \(error)")
-            print("👁️ Vision localized: \(error.localizedDescription)")
-            cameraState = .error("Something went wrong. Try again! 🔄")
+            print("🔍 CAUGHT ANY ERROR: \(error)")
+            print("🔍 ERROR TYPE: \(type(of: error))")
+            cameraState = .error("Something went wrong. Try again!")
         }
     }
 

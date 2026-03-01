@@ -26,6 +26,9 @@ class GroqVisionService {
     /// object labels with confidence descriptions
     func identifyObject(image: UIImage) async throws -> [VisionResult] {
 
+        print("👁️ identifyObject called")
+        print("👁️ API key valid: \(!apiKey.isEmpty && apiKey != "YOUR_GROQ_API_KEY_HERE")")
+
         guard !apiKey.isEmpty && apiKey != "YOUR_GROQ_API_KEY_HERE" else {
             throw GroqError.invalidAPIKey
         }

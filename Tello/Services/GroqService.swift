@@ -1,10 +1,11 @@
-// Purpose: Handles all communication with the Google Gemini API.
+// Purpose: Handles all communication with the Groq API.
 // Generates personalised stories and word definitions for children.
+// Uses llama-3.3-70b-versatile model for fast, high quality generation.
 
 import Foundation
 
-// MARK: - Gemini Error
-enum GeminiError: LocalizedError {
+// MARK: - Groq Error
+enum GroqError: LocalizedError {
     case invalidAPIKey
     case networkError(Error)
     case invalidResponse
@@ -25,41 +26,39 @@ enum GeminiError: LocalizedError {
         case .rateLimited:
             return "Too many requests. Please try again in a moment."
         case .emptyResponse:
-            return "Received an empty response from Gemini."
+            return "Received an empty response."
         }
     }
 }
 
-// MARK: - Gemini Service
-class GeminiService {
+// MARK: - Groq Service
+class GroqService {
 
     // MARK: - Properties
     private let apiKey: String
-    private let baseURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent"
+    private let baseURL = "https://api.groq.com/openai/v1/chat/completions"
+    private let model = "llama-3.3-70b-versatile"
     private let session: URLSession
 
+    // Word definition cache — avoids repeated API calls for same word
     private var wordCache: [String: WordModel] = [:]
 
     // MARK: - Init
-    init(apiKey: String = Config.geminiAPIKey) {
+    init(apiKey: String = Config.groqAPIKey) {
         self.apiKey = apiKey
         self.session = URLSession.shared
-        print("🚀 GeminiService initialized")
     }
 
     // MARK: - Generate Story
+    /// Generates a short personalised story for a child based on a detected object
     func generateStory(
         object: String,
         childName: String,
         homeLanguage: String
     ) async throws -> StoryModel {
 
-        print("🔑 API Key first 10 chars: \(String(apiKey.prefix(10)))")
-        print("🔑 API Key is placeholder: \(apiKey == "YOUR_GEMINI_API_KEY_HERE")")
-        print("🔑 API Key is empty: \(apiKey.isEmpty)")
-
-        guard !apiKey.isEmpty && apiKey != "YOUR_GEMINI_API_KEY_HERE" else {
-            throw GeminiError.invalidAPIKey
+        guard !apiKey.isEmpty && apiKey != "YOUR_GROQ_API_KEY_HERE" else {
+            throw GroqError.invalidAPIKey
         }
 
         let languageInstruction = homeLanguage != "English"
@@ -68,9 +67,9 @@ class GeminiService {
 
         let prompt = """
         You are a friendly storyteller for children aged 5-10.
-        
+
         Write a short story with EXACTLY 6 sentences about a \(object) for a child named \(childName).
-        
+
         Rules:
         - Use simple words (maximum 2 syllables where possible)
         - Make it fun, warm, and imaginative
@@ -79,10 +78,10 @@ class GeminiService {
         - Each sentence should be short (maximum 12 words)
         - Return valid JSON only. No trailing commas. No markdown. No backticks. No extra text.
         \(languageInstruction)
-        
+
         Also provide exactly 5 interesting or important words from the story as keyWords.
-        
-        You MUST respond with ONLY valid JSON in this exact format, no other text, no markdown, no backticks:
+
+        You MUST respond with ONLY valid JSON in this exact format:
         {
           "title": "A short fun story title here",
           "sentences": ["Sentence 1.", "Sentence 2.", "Sentence 3.", "Sentence 4.", "Sentence 5.", "Sentence 6."],
@@ -90,18 +89,20 @@ class GeminiService {
         }
         """
 
-        let responseText = try await callGemini(prompt: prompt)
+        let responseText = try await callGroq(prompt: prompt)
         let cleaned = cleanJSON(responseText)
 
+        print("📖 Cleaned story JSON: \(cleaned)")
+
         guard let data = cleaned.data(using: .utf8) else {
-            throw GeminiError.parsingError("Could not convert response to data")
+            throw GroqError.parsingError("Could not convert response to data")
         }
 
         do {
             let decoded = try JSONDecoder().decode(GeminiStoryResponse.self, from: data)
 
             guard decoded.sentences.count == 6 else {
-                throw GeminiError.parsingError("Expected 6 sentences, got \(decoded.sentences.count)")
+                throw GroqError.parsingError("Expected 6 sentences, got \(decoded.sentences.count)")
             }
 
             let story = StoryModel(
@@ -117,11 +118,12 @@ class GeminiService {
         } catch let decodingError as DecodingError {
             print("❌ Parsing error: \(decodingError)")
             print("❌ Raw response: \(responseText)")
-            throw GeminiError.parsingError(decodingError.localizedDescription)
+            throw GroqError.parsingError(decodingError.localizedDescription)
         }
     }
 
     // MARK: - Generate Word Definition
+    /// Generates a simple definition and SF Symbol for a given word
     func generateWordDefinition(word: String) async throws -> WordModel {
 
         let cacheKey = word.lowercased()
@@ -130,19 +132,19 @@ class GeminiService {
             return cached
         }
 
-        guard !apiKey.isEmpty && apiKey != "YOUR_GEMINI_API_KEY_HERE" else {
-            throw GeminiError.invalidAPIKey
+        guard !apiKey.isEmpty && apiKey != "YOUR_GROQ_API_KEY_HERE" else {
+            throw GroqError.invalidAPIKey
         }
 
         let prompt = """
         You are helping a child aged 5-10 understand a word.
-        
+
         Word: "\(word)"
-        
+
         Provide:
         1. A simple one-sentence definition a 6-year-old can understand (maximum 15 words)
         2. The name of ONE Apple SF Symbol that best represents this word visually
-        
+
         For the SF Symbol, use only common, widely available symbols like:
         sun.max.fill, moon.fill, star.fill, heart.fill, house.fill, car.fill,
         airplane, book.fill, music.note, camera.fill, tree.fill, leaf.fill,
@@ -150,7 +152,7 @@ class GeminiService {
         figure.walk, bicycle, fork.knife, cup.and.saucer.fill, gift.fill,
         pencil, paintbrush.fill, scissors, magnifyingglass, bell.fill,
         flag.fill, map.fill, clock.fill, calendar, bag.fill, cart.fill
-        
+
         You MUST respond with ONLY valid JSON, no other text, no markdown, no backticks:
         {
           "definition": "Simple definition here.",
@@ -158,11 +160,11 @@ class GeminiService {
         }
         """
 
-        let responseText = try await callGemini(prompt: prompt)
+        let responseText = try await callGroq(prompt: prompt)
         let cleaned = cleanJSON(responseText)
 
         guard let data = cleaned.data(using: .utf8) else {
-            throw GeminiError.parsingError("Could not convert word response to data")
+            throw GroqError.parsingError("Could not convert word response to data")
         }
 
         do {
@@ -179,73 +181,71 @@ class GeminiService {
 
         } catch let decodingError as DecodingError {
             print("❌ Word parsing error: \(decodingError)")
-            throw GeminiError.parsingError(decodingError.localizedDescription)
+            throw GroqError.parsingError(decodingError.localizedDescription)
         }
     }
 
     // MARK: - Core API Call
-    private func callGemini(prompt: String) async throws -> String {
-        let urlString = "\(baseURL)?key=\(apiKey)"
-        guard let url = URL(string: urlString) else {
-            throw GeminiError.invalidResponse
+    private func callGroq(prompt: String) async throws -> String {
+
+        guard let url = URL(string: baseURL) else {
+            throw GroqError.invalidResponse
         }
 
+        // Build OpenAI-compatible request body
         let requestBody: [String: Any] = [
-            "contents": [
+            "model": model,
+            "messages": [
                 [
-                    "parts": [
-                        ["text": prompt]
-                    ]
+                    "role": "user",
+                    "content": prompt
                 ]
             ],
-            "generationConfig": [
-                "temperature": 0.8,
-                "maxOutputTokens": 1000,
-                "topP": 0.9
-            ]
+            "temperature": 0.8,
+            "max_tokens": 1000
         ]
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.timeoutInterval = 30
 
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
         } catch {
-            throw GeminiError.parsingError("Could not serialize request body")
+            throw GroqError.parsingError("Could not serialize request body")
         }
 
         let (data, response): (Data, URLResponse)
         do {
             (data, response) = try await session.data(for: request)
         } catch {
-            throw GeminiError.networkError(error)
+            throw GroqError.networkError(error)
         }
 
-        print("📡 Raw response: \(String(data: data, encoding: .utf8) ?? "nil")")
         print("📡 HTTP status: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
+        print("📡 Raw response: \(String(data: data, encoding: .utf8) ?? "nil")")
 
         if let httpResponse = response as? HTTPURLResponse {
             switch httpResponse.statusCode {
             case 200: break
-            case 429: throw GeminiError.rateLimited
-            case 401, 403: throw GeminiError.invalidAPIKey
+            case 429: throw GroqError.rateLimited
+            case 401, 403: throw GroqError.invalidAPIKey
             default:
                 print("❌ HTTP \(httpResponse.statusCode)")
-                throw GeminiError.invalidResponse
+                throw GroqError.invalidResponse
             }
         }
 
+        // Parse OpenAI-compatible response envelope
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let candidates = json["candidates"] as? [[String: Any]],
-              let firstCandidate = candidates.first,
-              let content = firstCandidate["content"] as? [String: Any],
-              let parts = content["parts"] as? [[String: Any]],
-              let firstPart = parts.first,
-              let text = firstPart["text"] as? String else {
-            print("❌ Could not parse Gemini envelope: \(String(data: data, encoding: .utf8) ?? "nil")")
-            throw GeminiError.emptyResponse
+              let choices = json["choices"] as? [[String: Any]],
+              let firstChoice = choices.first,
+              let message = firstChoice["message"] as? [String: Any],
+              let text = message["content"] as? String else {
+            print("❌ Could not parse Groq envelope: \(String(data: data, encoding: .utf8) ?? "nil")")
+            throw GroqError.emptyResponse
         }
 
         return text

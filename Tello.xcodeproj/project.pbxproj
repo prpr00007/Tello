@@ -25,7 +25,7 @@
 		E0100016 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200016 /* Config.swift */; };
 		E0100017 /* StoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200017 /* StoryModel.swift */; };
 		E0100018 /* WordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200018 /* WordModel.swift */; };
-		E0100019 /* GeminiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200019 /* GeminiService.swift */; };
+		E0100019 /* GroqService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200019 /* GroqService.swift */; };
 		E0100020 /* LoadingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200020 /* LoadingViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -49,7 +49,7 @@
 		E0200016 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		E0200017 /* StoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryModel.swift; sourceTree = "<group>"; };
 		E0200018 /* WordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordModel.swift; sourceTree = "<group>"; };
-		E0200019 /* GeminiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiService.swift; sourceTree = "<group>"; };
+		E0200019 /* GroqService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroqService.swift; sourceTree = "<group>"; };
 		E0200020 /* LoadingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -139,7 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				E0200013 /* VisionService.swift */,
-				E0200019 /* GeminiService.swift */,
+				E0200019 /* GroqService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -244,7 +244,7 @@
 				E0100016 /* Config.swift in Sources */,
 				E0100017 /* StoryModel.swift in Sources */,
 				E0100018 /* WordModel.swift in Sources */,
-				E0100019 /* GeminiService.swift in Sources */,
+				E0100019 /* GroqService.swift in Sources */,
 				E0100020 /* LoadingViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

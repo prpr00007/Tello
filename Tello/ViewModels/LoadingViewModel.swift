@@ -47,7 +47,7 @@ class LoadingViewModel: ObservableObject {
 
     @AppStorage("homeLanguage") private var homeLanguage = "English"
 
-    private let geminiService = GeminiService()
+    private let groqService = GroqService()
     private var stageTimer: Task<Void, Never>?
     private var slowTimer: Task<Void, Never>?
 
@@ -76,7 +76,7 @@ class LoadingViewModel: ObservableObject {
         }
 
         do {
-            let story = try await geminiService.generateStory(
+            let story = try await groqService.generateStory(
                 object: detectedObject,
                 childName: childName,
                 homeLanguage: homeLanguage
@@ -99,10 +99,10 @@ class LoadingViewModel: ObservableObject {
             print("❌ Localized: \(error.localizedDescription)")
 
             let message: String
-            if let geminiError = error as? GeminiError {
-                switch geminiError {
+            if let groqError = error as? GroqError {
+                switch groqError {
                 case .invalidAPIKey:
-                    message = "API key not set up yet. Add your Gemini API key to Config.swift."
+                    message = "API key not set up yet. Add your Groq API key to Config.swift."
                 case .rateLimited:
                     message = "Too many requests! Wait a moment and try again."
                 case .networkError:

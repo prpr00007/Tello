@@ -1,6 +1,6 @@
 // Purpose: Home screen and main hub for Tello.
-// Greets the child, shows word jar progress, and provides
-// navigation to the camera and word jar.
+// Greets the child, shows word barn progress, and provides
+// navigation to the camera and word barn.
 
 import SwiftUI
 
@@ -30,6 +30,28 @@ struct HomeView: View {
                     cloud3Offset: cloud3Offset
                 )
 
+                // MARK: - Decorative barn on near hill (right side)
+                VStack(spacing: 4) {
+                    Button {
+                        navigationPath.append("wordbarn")
+                    } label: {
+                        BarnIllustration(
+                            fillLevel: wordCount >= 20 ? 1.0 : wordCount >= 10 ? 0.5 : wordCount >= 5 ? 0.25 : 0,
+                            wordCount: wordCount,
+                            overflows: wordCount >= 20
+                        )
+                        .frame(width: 80, height: 70)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    Text("Word Barn")
+                        .font(fontManager.uiFont(size: 14, weight: .semibold))
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.3), radius: 2)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                .padding(.trailing, 60)
+                .padding(.bottom, 120)
+
                 // MARK: - Main Content
                 VStack(spacing: 0) {
 
@@ -56,8 +78,8 @@ struct HomeView: View {
                 if destination == "camera" {
                     CameraView(navigationPath: $navigationPath)
                         .navigationBarHidden(true)
-                } else if destination == "wordjar" {
-                    WordJarView()
+                } else if destination == "wordbarn" {
+                    WordBarnView()
                         .navigationBarHidden(true)
                 } else if destination == "settings" {
                     SettingsView(navigationPath: $navigationPath)
@@ -97,18 +119,16 @@ struct HomeView: View {
 
             Spacer()
 
-            // Word jar teaser
+            // Word barn teaser
             Button {
-                navigationPath.append("wordjar")
+                navigationPath.append("wordbarn")
             } label: {
                 HStack(spacing: 10) {
-                    Text("🫙")
-                        .font(.system(size: 24))
                     VStack(alignment: .leading, spacing: 2) {
                         Text("\(wordCount) words")
                             .font(fontManager.uiFont(size: 16, weight: .bold))
                             .foregroundColor(Color("AppText"))
-                        Text("in your jar")
+                        Text("In the Barn")
                             .font(fontManager.uiFont(size: 13))
                             .foregroundColor(Color("AppSecondaryText"))
                     }
@@ -118,7 +138,7 @@ struct HomeView: View {
                 .background(.ultraThinMaterial)
                 .cornerRadius(20)
             }
-            .accessibilityLabel("Word jar, \(wordCount) words collected")
+            .accessibilityLabel("Word Barn, \(wordCount) words collected")
 
             // Settings
             Button {
@@ -155,14 +175,12 @@ struct HomeView: View {
     var bottomActions: some View {
         HStack(spacing: 20) {
 
-            // Word Jar button
+            // Word Barn button
             Button {
-                navigationPath.append("wordjar")
+                navigationPath.append("wordbarn")
             } label: {
                 HStack(spacing: 10) {
-                    Text("🫙")
-                        .font(.system(size: 22))
-                    Text("My Word Jar")
+                    Text("My Word Barn")
                         .font(fontManager.uiFont(size: 18, weight: .semibold))
                         .foregroundColor(Color("AppText"))
                 }
@@ -171,7 +189,7 @@ struct HomeView: View {
                 .background(.ultraThinMaterial)
                 .cornerRadius(20)
             }
-            .accessibilityLabel("My Word Jar")
+            .accessibilityLabel("My Word Barn")
 
             // Reset onboarding (test only)
             Button {

@@ -91,7 +91,7 @@ struct WordCardView: View {
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: isCollected ? "star.fill" : "star")
-                            Text(isCollected ? "In your jar" : "Add to jar")
+                            Text(isCollected ? "In the Barn" : "Add to Barn")
                         }
                         .font(fontManager.uiFont(size: 17, weight: .medium))
                         .foregroundColor(isCollected ? Color("AppSuccess") : .white)

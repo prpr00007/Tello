@@ -32,7 +32,7 @@
 		E0100022 /* StoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200022 /* StoryViewModel.swift */; };
 		E0100023 /* StoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200023 /* StoryView.swift */; };
 		E0100024 /* WordCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200024 /* WordCardView.swift */; };
-		E0100025 /* WordJarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200025 /* WordJarView.swift */; };
+		E0100025 /* WordBarnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200025 /* WordBarnView.swift */; };
 		E0100027 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200027 /* HomeView.swift */; };
 		E0100028 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200028 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
@@ -64,7 +64,7 @@
 		E0200022 /* StoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewModel.swift; sourceTree = "<group>"; };
 		E0200023 /* StoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryView.swift; sourceTree = "<group>"; };
 		E0200024 /* WordCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordCardView.swift; sourceTree = "<group>"; };
-		E0200025 /* WordJarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordJarView.swift; sourceTree = "<group>"; };
+		E0200025 /* WordBarnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordBarnView.swift; sourceTree = "<group>"; };
 		E0200027 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		E0200028 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -134,7 +134,7 @@
 				E0200028 /* SettingsView.swift */,
 				E0200023 /* StoryView.swift */,
 				E0200024 /* WordCardView.swift */,
-				E0200025 /* WordJarView.swift */,
+				E0200025 /* WordBarnView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -275,7 +275,7 @@
 				E0100022 /* StoryViewModel.swift in Sources */,
 				E0100023 /* StoryView.swift in Sources */,
 				E0100024 /* WordCardView.swift in Sources */,
-				E0100025 /* WordJarView.swift in Sources */,
+				E0100025 /* WordBarnView.swift in Sources */,
 				E0100027 /* HomeView.swift in Sources */,
 				E0100028 /* SettingsView.swift in Sources */,
 			);

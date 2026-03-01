@@ -98,7 +98,7 @@ struct StoryView: View {
         }
         .navigationBarHidden(true)
         .navigationDestination(isPresented: $navigateToWordJar) {
-            WordJarView()
+            WordBarnView()
                 .navigationBarHidden(true)
         }
         .onDisappear {
@@ -383,7 +383,7 @@ struct CelebrationView: View {
                     .foregroundColor(Color("AppSecondaryText"))
 
                 VStack(spacing: 12) {
-                    PrimaryButton(label: "See my Word Jar", icon: nil) {
+                    PrimaryButton(label: "Visit my Word Barn", icon: nil) {
                         onDismiss()
                         onViewWordJar()
                     }

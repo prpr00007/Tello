@@ -14,7 +14,7 @@ struct CameraView: View {
     @StateObject private var viewModel = CameraViewModel()
     @State private var viewfinderPulse = false
     @State private var showPermissionAlert = false
-    @State private var showWordJar = false
+    @State private var showWordBarn = false
 
     var body: some View {
         ZStack {
@@ -67,8 +67,8 @@ struct CameraView: View {
                 navigationPath.append(object)
             }
         }
-        .navigationDestination(isPresented: $showWordJar) {
-            WordJarView()
+        .navigationDestination(isPresented: $showWordBarn) {
+            WordBarnView()
                 .navigationBarHidden(true)
         }
         .task {
@@ -116,7 +116,7 @@ struct CameraView: View {
             .accessibilityLabel("Home")
 
             Button {
-                showWordJar = true
+                showWordBarn = true
             } label: {
                 HStack(spacing: 10) {
                     Image(systemName: "text.book.closed.fill")
@@ -133,7 +133,7 @@ struct CameraView: View {
                         .overlay(Capsule().stroke(Color.white.opacity(0.25), lineWidth: 1))
                 )
             }
-            .accessibilityLabel("Word Jar, \(wordCount) words collected")
+            .accessibilityLabel("Word Barn, \(wordCount) words collected")
 
             Spacer()
 

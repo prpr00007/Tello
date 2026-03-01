@@ -59,6 +59,9 @@ struct HomeView: View {
                 } else if destination == "wordbarn" {
                     WordBarnView()
                         .navigationBarHidden(true)
+                } else if destination == "paststories" {
+                    PastStoriesView()
+                        .navigationBarHidden(true)
                 } else if destination == "settings" {
                     SettingsView(navigationPath: $navigationPath)
                         .navigationBarHidden(true)
@@ -168,6 +171,22 @@ struct HomeView: View {
                 .cornerRadius(20)
             }
             .accessibilityLabel("Word Barn")
+
+            // Past Stories button
+            Button {
+                navigationPath.append("paststories")
+            } label: {
+                HStack(spacing: 10) {
+                    Text("Past Stories")
+                        .font(fontManager.uiFont(size: 18, weight: .semibold))
+                        .foregroundColor(Color("AppText"))
+                }
+                .padding(.horizontal, 28)
+                .padding(.vertical, 16)
+                .background(.ultraThinMaterial)
+                .cornerRadius(20)
+            }
+            .accessibilityLabel("Past Stories")
 
             // Reset onboarding (test only)
             Button {

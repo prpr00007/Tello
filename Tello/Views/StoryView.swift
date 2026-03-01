@@ -183,6 +183,8 @@ struct StoryView: View {
                 .navigationBarHidden(true)
         }
         .onAppear {
+            let historyService = StoryHistoryService()
+            historyService.save(story: story)
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 if !hasSeenWordTapTip {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {

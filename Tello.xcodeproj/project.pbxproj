@@ -39,6 +39,9 @@
 		E0100030 /* DifficultyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200030 /* DifficultyManager.swift */; };
 		E0100031 /* OnboardingAgePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200031 /* OnboardingAgePage.swift */; };
 		E0100032 /* GroqVisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200032 /* GroqVisionService.swift */; };
+		E0100033 /* StoryHistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200033 /* StoryHistoryModel.swift */; };
+		E0100034 /* StoryHistoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200034 /* StoryHistoryService.swift */; };
+		E0100035 /* PastStoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200035 /* PastStoriesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +78,9 @@
 		E0200030 /* DifficultyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultyManager.swift; sourceTree = "<group>"; };
 		E0200031 /* OnboardingAgePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAgePage.swift; sourceTree = "<group>"; };
 		E0200032 /* GroqVisionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroqVisionService.swift; sourceTree = "<group>"; };
+		E0200033 /* StoryHistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryHistoryModel.swift; sourceTree = "<group>"; };
+		E0200034 /* StoryHistoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryHistoryService.swift; sourceTree = "<group>"; };
+		E0200035 /* PastStoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastStoriesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +151,7 @@
 				E0200023 /* StoryView.swift */,
 				E0200024 /* WordCardView.swift */,
 				E0200025 /* WordBarnView.swift */,
+				E0200035 /* PastStoriesView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -164,6 +171,7 @@
 			children = (
 				E0200017 /* StoryModel.swift */,
 				E0200018 /* WordModel.swift */,
+				E0200033 /* StoryHistoryModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -175,6 +183,7 @@
 				E0200019 /* GroqService.swift */,
 				E0200032 /* GroqVisionService.swift */,
 				E0200021 /* SpeechService.swift */,
+				E0200034 /* StoryHistoryService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -294,6 +303,9 @@
 				E0100030 /* DifficultyManager.swift in Sources */,
 				E0100031 /* OnboardingAgePage.swift in Sources */,
 				E0100032 /* GroqVisionService.swift in Sources */,
+				E0100033 /* StoryHistoryModel.swift in Sources */,
+				E0100034 /* StoryHistoryService.swift in Sources */,
+				E0100035 /* PastStoriesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

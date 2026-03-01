@@ -39,27 +39,28 @@ class GroqVisionService {
     /// Takes a UIImage and returns the top 3 child-friendly
     /// object labels with confidence descriptions
     func identifyObject(image: UIImage) async throws -> [VisionResult] {
-
-        print("👁️ VISION SERVICE CALLED")
-        print("👁️ identifyObject called")
-        print("👁️ API key valid: \(!apiKey.isEmpty && apiKey != "YOUR_GROQ_API_KEY_HERE")")
+        print("👁️ STEP 1 - identifyObject called")
 
         guard !apiKey.isEmpty && apiKey != "YOUR_GROQ_API_KEY_HERE" else {
+            print("👁️ STEP 2 FAILED - invalid API key")
             throw GroqError.invalidAPIKey
         }
-        print("👁️ API key check passed")
+        print("👁️ STEP 2 - API key valid")
 
         let resized = resizeImage(image, maxDimension: 640)
-        print("👁️ Original size: \(image.size), Resized: \(resized.size)")
+        print("👁️ STEP 3 - resized to \(resized.size)")
 
-        // Convert image to base64
         guard let imageData = resized.jpegData(compressionQuality: 0.5) else {
+            print("👁️ STEP 4 FAILED - could not convert to JPEG")
             throw GroqError.invalidResponse
         }
-        let base64Image = imageData.base64EncodedString()
-        print("👁️ JPEG size: \(imageData.count) bytes, Base64: \(base64Image.count) chars")
+        print("👁️ STEP 4 - JPEG size: \(imageData.count) bytes")
 
-        print("👁️ Starting vision detection...")
+        let base64Image = imageData.base64EncodedString()
+        print("👁️ STEP 5 - base64 length: \(base64Image.count)")
+
+        // Build request
+        print("👁️ STEP 6 - building request")
 
         let prompt = """
         Look at this image and identify the most prominent object or subject.
@@ -104,9 +105,9 @@ class GroqVisionService {
             "temperature": 0.1,
             "max_tokens": 200
         ]
-        print("👁️ Request body built")
 
         guard let url = URL(string: baseURL) else {
+            print("👁️ STEP 6 FAILED - invalid URL: \(baseURL)")
             throw GroqError.invalidResponse
         }
         var request = URLRequest(url: url)
@@ -114,23 +115,37 @@ class GroqVisionService {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.timeoutInterval = 20
-        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        } catch {
+            print("👁️ STEP 6 FAILED - request body serialization: \(error)")
+            throw error
+        }
 
-        print("👁️ Sending request to: \(baseURL)")
-        let (data, response) = try await session.data(for: request)
-        print("👁️ Response received")
-
-        print("👁️ Raw data length: \(data.count)")
-        print("👁️ Raw response string: \(String(data: data, encoding: .utf8) ?? "nil")")
-        print("👁️ Full response data: \(String(data: data, encoding: .utf8) ?? "nil")")
-        print("👁️ Vision HTTP status: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await session.data(for: request)
+            print("👁️ STEP 7 - got response")
+            print("👁️ STEP 7 - HTTP status: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
+            print("👁️ STEP 7 - raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        } catch {
+            print("👁️ STEP 7 FAILED - network error: \(error)")
+            throw GroqError.networkError(error)
+        }
 
         if let httpResponse = response as? HTTPURLResponse {
             switch httpResponse.statusCode {
             case 200: break
-            case 429: throw GroqError.rateLimited
-            case 401, 403: throw GroqError.invalidAPIKey
-            default: throw GroqError.invalidResponse
+            case 429:
+                print("👁️ STEP 8 FAILED - rate limited")
+                throw GroqError.rateLimited
+            case 401, 403:
+                print("👁️ STEP 8 FAILED - invalid API key (HTTP \(httpResponse.statusCode))")
+                throw GroqError.invalidAPIKey
+            default:
+                print("👁️ STEP 8 FAILED - invalid response HTTP \(httpResponse.statusCode)")
+                throw GroqError.invalidResponse
             }
         }
 
@@ -141,6 +156,7 @@ class GroqVisionService {
                   let firstChoice = choices.first,
                   let message = firstChoice["message"] as? [String: Any],
                   let text = message["content"] as? String else {
+                print("👁️ PARSE FAILED - empty or invalid response envelope")
                 throw GroqError.emptyResponse
             }
 

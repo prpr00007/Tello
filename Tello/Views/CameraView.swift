@@ -446,18 +446,16 @@ class CameraPreviewViewController: UIViewController {
 
         guard let previewLayer else { return }
 
-        // Get the current device orientation
         let bounds = view.bounds
 
-        // Swap width and height and apply rotation transform
-        // to correct the 90 degree rotation issue on iPad
+        // Centre the rotated layer and fill the screen
         previewLayer.frame = CGRect(
             x: -(bounds.height - bounds.width) / 2,
             y: (bounds.height - bounds.width) / 2,
             width: bounds.height,
             height: bounds.width
         )
-        previewLayer.setAffineTransform(CGAffineTransform(rotationAngle: .pi / 2))
+        previewLayer.setAffineTransform(CGAffineTransform(rotationAngle: -.pi / 2))
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {

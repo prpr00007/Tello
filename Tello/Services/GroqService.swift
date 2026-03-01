@@ -76,7 +76,8 @@ class GroqService {
         Write a short story with EXACTLY \(level.sentenceCount) sentences about a \(object) for a child named \(childName).
 
         Rules:
-        - \(level.vocabularyInstruction)
+        \(level.vocabularyInstruction)
+
         - Make it fun, warm, and imaginative
         - Include \(childName)'s name naturally in the story
         - The \(object) must be the main character or central theme

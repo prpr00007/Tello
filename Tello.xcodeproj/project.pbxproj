@@ -22,6 +22,11 @@
 		E0100013 /* VisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200013 /* VisionService.swift */; };
 		E0100014 /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200014 /* CameraViewModel.swift */; };
 		E0100015 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200015 /* LoadingView.swift */; };
+		E0100016 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200016 /* Config.swift */; };
+		E0100017 /* StoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200017 /* StoryModel.swift */; };
+		E0100018 /* WordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200018 /* WordModel.swift */; };
+		E0100019 /* GeminiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200019 /* GeminiService.swift */; };
+		E0100020 /* LoadingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200020 /* LoadingViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +46,11 @@
 		E0200013 /* VisionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionService.swift; sourceTree = "<group>"; };
 		E0200014 /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		E0200015 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		E0200016 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		E0200017 /* StoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryModel.swift; sourceTree = "<group>"; };
+		E0200018 /* WordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordModel.swift; sourceTree = "<group>"; };
+		E0200019 /* GeminiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiService.swift; sourceTree = "<group>"; };
+		E0200020 /* LoadingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				E0200014 /* CameraViewModel.swift */,
+				E0200020 /* LoadingViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -118,6 +129,8 @@
 		E0400007 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				E0200017 /* StoryModel.swift */,
+				E0200018 /* WordModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -126,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				E0200013 /* VisionService.swift */,
+				E0200019 /* GeminiService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -134,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				E0200003 /* FontManager.swift */,
+				E0200016 /* Config.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -226,6 +241,11 @@
 				E0100013 /* VisionService.swift in Sources */,
 				E0100014 /* CameraViewModel.swift in Sources */,
 				E0100015 /* LoadingView.swift in Sources */,
+				E0100016 /* Config.swift in Sources */,
+				E0100017 /* StoryModel.swift in Sources */,
+				E0100018 /* WordModel.swift in Sources */,
+				E0100019 /* GeminiService.swift in Sources */,
+				E0100020 /* LoadingViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

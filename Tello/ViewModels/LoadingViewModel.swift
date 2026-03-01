@@ -53,12 +53,14 @@ class LoadingViewModel: ObservableObject {
 
     // MARK: - Init
     init(detectedObject: String, childName: String) {
+        print("🏗️ LoadingViewModel init - object: \(detectedObject), name: \(childName)")
         self.detectedObject = detectedObject
         self.childName = childName
     }
 
     // MARK: - Generate Story
     func generateStory() async {
+        print("🚀 generateStory() called")
         errorMessage = nil
         generatedStory = nil
         currentStage = .reading

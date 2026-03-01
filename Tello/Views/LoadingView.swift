@@ -23,6 +23,7 @@ struct LoadingView: View {
     }
 
     var body: some View {
+        let _ = print("🎬 LoadingView body rendered")
         ZStack {
             Color("AppBackground").ignoresSafeArea()
 

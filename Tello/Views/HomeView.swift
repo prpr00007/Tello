@@ -133,63 +133,17 @@ struct HomeView: View {
         .opacity(contentOpacity)
     }
 
-    // MARK: - Centre Content
+    // MARK: - Centre Content (Book)
     var centreContent: some View {
-        VStack(spacing: 28) {
-
-            // Main illustration / icon
-            ZStack {
-                Circle()
-                    .fill(.ultraThinMaterial)
-                    .frame(width: 160, height: 160)
-
-                Text("📖")
-                    .font(.system(size: 80))
-            }
-            .scaleEffect(titleScale)
-            .opacity(titleOpacity)
-
-            // Tagline
-            VStack(spacing: 10) {
-                Text("What will you discover")
-                    .font(fontManager.storyFont(size: 28))
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.3), radius: 4)
-
-                Text("today, \(childName)?")
-                    .font(fontManager.storyFontBold(size: 34))
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.3), radius: 4)
-            }
-            .opacity(titleOpacity)
-
-            // Big CTA Button
-            Button {
+        BookView(
+            childName: childName,
+            fontManager: fontManager,
+            onOpen: {
                 navigationPath.append("camera")
-            } label: {
-                HStack(spacing: 14) {
-                    Image(systemName: "camera.fill")
-                        .font(.system(size: 24, weight: .semibold))
-                    Text("Start a Story!")
-                        .font(fontManager.storyFontBold(size: 26))
-                }
-                .foregroundColor(.white)
-                .padding(.horizontal, 48)
-                .padding(.vertical, 22)
-                .background(
-                    LinearGradient(
-                        colors: [Color("AppPrimary"), Color("AppPrimary").opacity(0.8)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .cornerRadius(28)
-                .shadow(color: Color("AppPrimary").opacity(0.5), radius: 16, x: 0, y: 8)
             }
-            .scaleEffect(titleScale)
-            .opacity(titleOpacity)
-            .accessibilityLabel("Start a story — opens camera")
-        }
+        )
+        .scaleEffect(titleScale)
+        .opacity(titleOpacity)
     }
 
     // MARK: - Bottom Actions
@@ -401,6 +355,224 @@ struct CloudShape: Shape {
         path.addEllipse(in: CGRect(x: 0, y: h * 0.4, width: w * 0.6, height: h * 0.5))
         path.addEllipse(in: CGRect(x: w * 0.35, y: h * 0.35, width: w * 0.5, height: h * 0.55))
         return path
+    }
+}
+
+// MARK: - Book View
+struct BookView: View {
+
+    let childName: String
+    let fontManager: FontManager
+    let onOpen: () -> Void
+
+    @State private var isOpening = false
+    @State private var coverAngle: Double = 0
+    @State private var bobOffset: CGFloat = 0
+
+    let bookWidth: CGFloat = 300
+    let bookHeight: CGFloat = 380
+
+    var body: some View {
+        ZStack {
+            // Book shadow
+            Ellipse()
+                .fill(Color.black.opacity(0.15))
+                .frame(width: bookWidth * 0.85, height: 24)
+                .offset(y: bookHeight * 0.52)
+                .blur(radius: 8)
+
+            // Pages (visible when book opens)
+            BookPages(width: bookWidth, height: bookHeight)
+                .opacity(isOpening ? 1.0 : 0.0)
+
+            // Book cover
+            BookCover(
+                width: bookWidth,
+                height: bookHeight,
+                childName: childName,
+                fontManager: fontManager,
+                isOpening: isOpening
+            )
+            .rotation3DEffect(
+                .degrees(coverAngle),
+                axis: (x: 0, y: 1, z: 0),
+                anchor: .leading,
+                perspective: 0.4
+            )
+
+            // Tap target overlay
+            if !isOpening {
+                Color.clear
+                    .frame(width: bookWidth, height: bookHeight)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        openBook()
+                    }
+            }
+        }
+        .frame(width: bookWidth, height: bookHeight)
+        .offset(y: bobOffset)
+        .onAppear {
+            // Gentle bobbing animation
+            withAnimation(
+                .easeInOut(duration: 2.5)
+                .repeatForever(autoreverses: true)
+            ) {
+                bobOffset = -12
+            }
+        }
+        .accessibilityLabel("Tello storybook")
+        .accessibilityHint("Tap to open the book and start a story")
+        .accessibilityAddTraits(.isButton)
+    }
+
+    // MARK: - Open Book
+    private func openBook() {
+        guard !isOpening else { return }
+        isOpening = true
+
+        // Stop bobbing
+        withAnimation(.easeOut(duration: 0.2)) {
+            bobOffset = 0
+        }
+
+        // Open cover with 3D rotation
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
+            coverAngle = -170
+        }
+
+        // Navigate after animation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            onOpen()
+        }
+    }
+}
+
+// MARK: - Book Cover
+struct BookCover: View {
+
+    let width: CGFloat
+    let height: CGFloat
+    let childName: String
+    let fontManager: FontManager
+    let isOpening: Bool
+
+    var body: some View {
+        ZStack {
+            // Cover background
+            RoundedRectangle(cornerRadius: 8)
+                .fill(
+                    LinearGradient(
+                        colors: [Color(hex: "#C0392B"), Color(hex: "#922B21")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: width, height: height)
+
+            // Spine shadow on left
+            Rectangle()
+                .fill(Color.black.opacity(0.25))
+                .frame(width: 20, height: height)
+                .offset(x: -(width / 2) + 10)
+                .cornerRadius(4)
+
+            // Gold border
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(Color(hex: "#F4D03F"), lineWidth: 3)
+                .frame(width: width - 24, height: height - 24)
+
+            // Inner gold border (double border effect)
+            RoundedRectangle(cornerRadius: 4)
+                .stroke(Color(hex: "#F4D03F").opacity(0.5), lineWidth: 1)
+                .frame(width: width - 36, height: height - 36)
+
+            // Cover content
+            VStack(spacing: 16) {
+                Spacer()
+
+                // Book illustration
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "#F4D03F").opacity(0.15))
+                        .frame(width: 110, height: 110)
+
+                    Circle()
+                        .stroke(Color(hex: "#F4D03F").opacity(0.4), lineWidth: 2)
+                        .frame(width: 110, height: 110)
+
+                    Text("✨")
+                        .font(.system(size: 56))
+                }
+
+                // Title
+                Text("Tello")
+                    .font(fontManager.storyFontBold(size: 42))
+                    .foregroundColor(Color(hex: "#F9EBEA"))
+                    .shadow(color: .black.opacity(0.3), radius: 4)
+
+                // Subtitle
+                Text("Your Story Starts Here")
+                    .font(fontManager.storyFont(size: 16))
+                    .foregroundColor(Color(hex: "#F4D03F").opacity(0.9))
+                    .italic()
+
+                Spacer()
+
+                // Tap prompt (only show when not opening)
+                if !isOpening {
+                    HStack(spacing: 8) {
+                        Image(systemName: "hand.tap.fill")
+                            .font(.system(size: 16))
+                        Text("Tap to open")
+                            .font(fontManager.uiFont(size: 16, weight: .medium))
+                    }
+                    .foregroundColor(Color(hex: "#F4D03F").opacity(0.8))
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Color.black.opacity(0.2))
+                    .cornerRadius(20)
+                    .padding(.bottom, 28)
+                } else {
+                    Color.clear.frame(height: 50)
+                }
+            }
+            .frame(width: width, height: height)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .shadow(color: Color(hex: "#922B21").opacity(0.4), radius: 12, x: 4, y: 8)
+    }
+}
+
+// MARK: - Book Pages
+struct BookPages: View {
+
+    let width: CGFloat
+    let height: CGFloat
+
+    var body: some View {
+        ZStack(alignment: .leading) {
+            // Pages stack (right side)
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(hex: "#FDF5E6"))
+                .frame(width: width, height: height)
+                .shadow(color: .black.opacity(0.1), radius: 4, x: 2, y: 2)
+
+            // Page lines to look like text
+            VStack(alignment: .leading, spacing: 14) {
+                ForEach(0..<10, id: \.self) { i in
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.gray.opacity(0.15))
+                        .frame(
+                            width: i % 3 == 0 ? width * 0.6 : width * 0.75,
+                            height: 8
+                        )
+                }
+            }
+            .padding(40)
+        }
+        .frame(width: width, height: height)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 

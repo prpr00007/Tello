@@ -38,6 +38,7 @@
 		E0100028 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200028 /* SettingsView.swift */; };
 		E0100030 /* DifficultyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200030 /* DifficultyManager.swift */; };
 		E0100031 /* OnboardingAgePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200031 /* OnboardingAgePage.swift */; };
+		E0100032 /* GroqVisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0200032 /* GroqVisionService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +74,7 @@
 		E0200028 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E0200030 /* DifficultyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultyManager.swift; sourceTree = "<group>"; };
 		E0200031 /* OnboardingAgePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAgePage.swift; sourceTree = "<group>"; };
+		E0200032 /* GroqVisionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroqVisionService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +173,7 @@
 			children = (
 				E0200013 /* VisionService.swift */,
 				E0200019 /* GroqService.swift */,
+				E0200032 /* GroqVisionService.swift */,
 				E0200021 /* SpeechService.swift */,
 			);
 			path = Services;
@@ -290,6 +293,7 @@
 				E0100028 /* SettingsView.swift in Sources */,
 				E0100030 /* DifficultyManager.swift in Sources */,
 				E0100031 /* OnboardingAgePage.swift in Sources */,
+				E0100032 /* GroqVisionService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

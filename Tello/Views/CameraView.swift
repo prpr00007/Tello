@@ -15,6 +15,8 @@ struct CameraView: View {
     @State private var viewfinderPulse = false
     @State private var showPermissionAlert = false
     @State private var showWordBarn = false
+    @State private var processingMessage = "Looking at that..."
+    @State private var processingWorkItem: DispatchWorkItem?
 
     var body: some View {
         ZStack {
@@ -79,6 +81,20 @@ struct CameraView: View {
         }
         .onDisappear {
             viewModel.stopSession()
+        }
+        .onChange(of: viewModel.cameraState) { _, newState in
+            if case .processing = newState {
+                processingMessage = "Looking at that..."
+                processingWorkItem?.cancel()
+                let work = DispatchWorkItem {
+                    processingMessage = "Almost got it..."
+                }
+                processingWorkItem = work
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: work)
+            } else {
+                processingWorkItem?.cancel()
+                processingWorkItem = nil
+            }
         }
         .alert("Camera Access Needed", isPresented: $showPermissionAlert) {
             Button("Open Settings") {
@@ -254,7 +270,7 @@ struct CameraView: View {
                     .tint(.white)
                     .scaleEffect(1.6)
 
-                Text("Looking at that...")
+                Text(processingMessage)
                     .font(fontManager.storyFontBold(size: 24))
                     .foregroundColor(.white)
             }

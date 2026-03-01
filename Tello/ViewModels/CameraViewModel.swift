@@ -88,7 +88,7 @@ class CameraViewModel: NSObject, ObservableObject {
     private var photoContinuation: CheckedContinuation<UIImage, Error>?
 
     // MARK: - Services
-    private let visionService = VisionService()
+    private let visionService = GroqVisionService()
 
     // MARK: - Setup
     func setupCamera() async {
@@ -164,7 +164,7 @@ class CameraViewModel: NSObject, ObservableObject {
     // MARK: - Classify Image
     private func classifyImage(_ image: UIImage) async {
         do {
-            let results = try await visionService.classify(image: image)
+            let results = try await visionService.identifyObject(image: image)
 
             if results.isEmpty {
                 // Nothing recognised
